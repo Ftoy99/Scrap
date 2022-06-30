@@ -9,7 +9,7 @@ import net.minecraft.util.registry.Registry;
 
 
 public class ModItems {
-    public static final Item SCRAP =registerItem("scrap",new Item(new FabricItemSettings().group(ItemGroup.MATERIALS).maxCount(128)));
+    public static final Item SCRAP =registerItem("scrap",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static void registerModItems(){
         Main.LOGGER.info("Registering Mod Items for "+Main.MOD_ID);
     }

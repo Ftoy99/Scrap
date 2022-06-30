@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "minecraft:block/scrap_block"
+      "model": "scrap:block/scrap_block"
     }
   }
 }
