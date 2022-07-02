@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class ModBlocks{
-    public static final Block SCRAP_BLOCK = registerBlock("scrap_block",new Block(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+    public static final Block SCRAP_BLOCK = registerBlock("raw_scrap_block",new Block(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
     public static Block registerBlock(String name, Block block, ItemGroup group){
         registerBlockItem(name,block,group);

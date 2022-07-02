@@ -1,5 +1,18 @@
 {
-  "item.scrap.scrap": "Scrap",
   "itemGroup.scrap.scrap": "Scrap",
-  "block.scrap.scrap_block": "Scrap Block"
+
+
+
+  "item.scrap.scrap": "Scrap",
+  "item.scrap.scrap_ingot": "Scrap Ingot",
+  "item.scrap.washed_raw_iron": "Washed Raw Iron",
+  "item.scrap.washed_raw_gold": "Washed Raw Gold",
+  "item.scrap.washed_raw_copper": "Washed Raw Copper",
+
+
+
+  "block.scrap.raw_scrap_block": "Raw Scrap Block"
+
+
+
 }
