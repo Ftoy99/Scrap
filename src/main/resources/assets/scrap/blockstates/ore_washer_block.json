@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "scrap:block/ore_washer_block"
+    }
+  }
+}

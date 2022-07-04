@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "scrap:scrap_block"
+          "name": "scrap:raw_scrap_block"
         }
       ],
       "rolls": 1.0

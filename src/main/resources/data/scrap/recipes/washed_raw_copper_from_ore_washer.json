@@ -1,0 +1,10 @@
+{
+  "type": "scrap:ore_washer",
+  "ingredients": [
+    {
+      "item": "minecraft:raw_copper"
+    }
+  ],
+  "output": { "item": "scrap:washed_raw_copper"},
+  "byproduct": { "item": "scrap:scrap"}
+}

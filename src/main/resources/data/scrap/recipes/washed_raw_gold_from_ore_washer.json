@@ -1,0 +1,10 @@
+{
+  "type": "scrap:ore_washer",
+  "ingredients": [
+    {
+      "item": "minecraft:raw_gold"
+    }
+  ],
+  "output": { "item": "scrap:washed_raw_gold"},
+  "byproduct": { "item": "scrap:scrap"}
+}

@@ -20,6 +20,8 @@
   "entrypoints": {
     "main": [
       "net.fabricmc.scrap.Main"
+    ], "client": [
+      "net.fabricmc.scrap.ScrapClient"
     ]
   },
   "depends": {
