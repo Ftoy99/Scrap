@@ -25,13 +25,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+import static net.minecraft.state.property.Properties.WATERLOGGED;
+
 public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
 
     protected final PropertyDelegate propertyDelegate;
     private int progress = 0;
-    private int maxProgress = 40;
+    private int maxProgress = 400;
 
     public OreWasherBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ORE_WASHER_BLOCK_ENTITY, pos, state);
@@ -68,16 +70,15 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        nbt.putInt("orewasher.progress", progress);
-        nbt.putInt("orewasher.maxProgress", progress);
+        progress = nbt.getInt("orewasher.progress");
+
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
         Inventories.writeNbt(nbt, inventory);
         super.writeNbt(nbt);
-        progress = nbt.getInt("orewasher.progress");
-        maxProgress = nbt.getInt("orewasher.maxProgress");
+        nbt.putInt("orewasher.progress", progress);
     }
 
     @Override
@@ -97,6 +98,7 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, OreWasherBlockEntity entity) {
+        if (state.get(WATERLOGGED)) {
         if (hasRecipe(entity)) {
             entity.progress++;
             if (entity.progress > entity.maxProgress) {
@@ -104,6 +106,7 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
             }
         } else {
             entity.resetProgress();
+        }
         }
     }
 
@@ -118,7 +121,9 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
         Optional<OreWasherRecipe> match = world.getRecipeManager()
                 .getFirstMatch(OreWasherRecipe.Type.INSTANCE, inventory, world);
         return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, match.get().getOutput());
+                && canInsertItemIntoOutputSlot(inventory, match.get().getOutput())
+                && canInsertItemIntoByproductSlot(inventory, match.get().getByproduct())
+                && canInsertAmountIntoByproductSlot(inventory);
     }
 
     private static void craftItem(OreWasherBlockEntity entity) {
@@ -148,8 +153,16 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
     private static boolean canInsertItemIntoOutputSlot(SimpleInventory inventory, ItemStack output) {
         return inventory.getStack(1).getItem() == output.getItem() || inventory.getStack(1).isEmpty();
     }
+    private static boolean canInsertItemIntoByproductSlot(SimpleInventory inventory, ItemStack output) {
+        return inventory.getStack(2).getItem() == output.getItem() || inventory.getStack(2).isEmpty();
+    }
 
     private static boolean canInsertAmountIntoOutputSlot(SimpleInventory inventory) {
         return inventory.getStack(1).getMaxCount() > inventory.getStack(1).getCount();
     }
+    private static boolean canInsertAmountIntoByproductSlot(SimpleInventory inventory) {
+        return inventory.getStack(2).getMaxCount() > inventory.getStack(2).getCount();
+    }
+
+
 }

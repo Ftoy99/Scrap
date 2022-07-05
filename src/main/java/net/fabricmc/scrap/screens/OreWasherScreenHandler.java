@@ -22,7 +22,7 @@ public class OreWasherScreenHandler extends ScreenHandler {
     private final PropertyDelegate propertyDelegate;
 
     public OreWasherScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(3),new ArrayPropertyDelegate(3));
+        this(syncId, playerInventory, new SimpleInventory(3),new ArrayPropertyDelegate(2));
     }
 
     public OreWasherScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate) {
@@ -31,7 +31,7 @@ public class OreWasherScreenHandler extends ScreenHandler {
         this.inventory = inventory;
         this.world = playerInventory.player.world;
         inventory.onOpen(playerInventory.player);
-        propertyDelegate = delegate;
+        this.propertyDelegate = delegate;
 
         // Our Slots
         this.addSlot(new Slot(inventory, 0, 33, 41));
@@ -39,6 +39,7 @@ public class OreWasherScreenHandler extends ScreenHandler {
         this.addSlot(new OreWasherOutputSlot(playerInventory.player,inventory, 2, 149, 41));
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
+        this.addProperties(propertyDelegate);
     }
     public boolean isCrafting() {
         return propertyDelegate.get(0) > 0;
@@ -46,7 +47,7 @@ public class OreWasherScreenHandler extends ScreenHandler {
     public int getScaledProgress() {
         int progress = this.propertyDelegate.get(0);
         int maxProgress = this.propertyDelegate.get(1);  // Max Progress
-        int progressArrowSize = 26; // This is the width in pixels of your arrow
+        int progressArrowSize = 24; // This is the width in pixels of your arrow
 
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }

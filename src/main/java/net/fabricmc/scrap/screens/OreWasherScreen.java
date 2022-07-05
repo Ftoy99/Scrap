@@ -25,7 +25,7 @@ public class OreWasherScreen extends HandledScreen<OreWasherScreenHandler> {
         int y = (height - backgroundHeight) / 2;
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
         if(handler.isCrafting()) {
-            drawTexture(matrices, x + 84, y + 22, 176, 14, handler.getScaledProgress(), 36);
+            drawTexture(matrices, x + 76, y + 42, 176, 0, handler.getScaledProgress(), 17);
         }
     }
     @Override
