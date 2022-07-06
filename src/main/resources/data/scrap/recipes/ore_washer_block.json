@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "minecraft:bucket"
+    },
+    "*": {
+      "item": "minecraft:iron_bars"
+    },
+    "&": {
+      "item": "minecraft:heavy_weighted_pressure_plate"
+    }
+  },
+  "pattern": [
+    "*#*",
+    "&&&"
+  ],
+  "result": {
+    "item": "scrap:ore_washer_block"
+  }
+}
