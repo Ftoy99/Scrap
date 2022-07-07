@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "scrap:block/furnace_generator_block",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "scrap:block/furnace_generator_block",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "scrap:block/furnace_generator_block"
+    },
+    "facing=west": {
+      "model": "scrap:block/furnace_generator_block",
+      "y": 90
+    }
+  }
+}

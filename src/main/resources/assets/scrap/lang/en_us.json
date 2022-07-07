@@ -12,7 +12,8 @@
 
 
   "block.scrap.raw_scrap_block": "Raw Scrap Block",
-  "block.scrap.ore_washer_block": "Ore Washer"
+  "block.scrap.ore_washer_block": "Ore Washer",
+  "block.scrap.furnace_generator_block": "Furnace Generator"
 
 
 
