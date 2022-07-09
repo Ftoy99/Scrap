@@ -3,25 +3,25 @@
  */
 package net.fabricmc.scrap.screens.slot;
 
+import net.fabricmc.scrap.screens.FurnaceGeneratorScreenHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.FurnaceFuelSlot;
 import net.minecraft.screen.slot.Slot;
 
-public class OreWasherOutputSlot
+public class FurnaceGeneratorFuelSlot
 extends Slot {
     private final PlayerEntity player;
     private int amount;
+    private final FurnaceGeneratorScreenHandler handler;
 
-    public OreWasherOutputSlot(PlayerEntity player, Inventory inventory, int index, int x, int y) {
+    public FurnaceGeneratorFuelSlot(FurnaceGeneratorScreenHandler handler,PlayerEntity player, Inventory inventory, int index, int x, int y) {
         super(inventory, index, x, y);
         this.player = player;
+        this.handler = handler;
     }
 
-    @Override
-    public boolean canInsert(ItemStack stack) {
-        return false;
-    }
 
     @Override
     public ItemStack takeStack(int amount) {
@@ -33,18 +33,21 @@ extends Slot {
 
     @Override
     public void onTakeItem(PlayerEntity player, ItemStack stack) {
-        this.onCrafted(stack);
         super.onTakeItem(player, stack);
     }
 
     @Override
-    protected void onCrafted(ItemStack stack, int amount) {
-        this.amount += amount;
-        this.onCrafted(stack);
+    protected void onCrafted(ItemStack stack) {
     }
 
     @Override
-    protected void onCrafted(ItemStack stack) {
+    public boolean canInsert(ItemStack stack) {
+        return this.handler.isFuel(stack);
+    }
+
+    @Override
+    public int getMaxItemCount(ItemStack stack) {
+        return FurnaceFuelSlot.isBucket(stack) ? 1 : super.getMaxItemCount(stack);
     }
 }
 

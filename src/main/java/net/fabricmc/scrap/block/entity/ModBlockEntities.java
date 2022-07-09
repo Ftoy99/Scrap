@@ -11,17 +11,24 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import team.reborn.energy.api.EnergyStorage;
 
 
 public class ModBlockEntities {
 
 
     public static BlockEntityType<OreWasherBlockEntity> ORE_WASHER_BLOCK_ENTITY;
+    public static BlockEntityType<FurnaceGeneratorBlockEntity> FURNACE_GENERATOR_BLOCK_ENTITY;
 
     public static void registerBlockEntities() {
         ORE_WASHER_BLOCK_ENTITY =
                 Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Main.MOD_ID, "ore_washer_block"),
                         FabricBlockEntityTypeBuilder.create(OreWasherBlockEntity::new,
                                 ModBlocks.ORE_WASHER_BLOCK).build(null));
+        FURNACE_GENERATOR_BLOCK_ENTITY =
+                Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Main.MOD_ID, "furnace_generator_block"),
+                        FabricBlockEntityTypeBuilder.create(FurnaceGeneratorBlockEntity::new,
+                                ModBlocks.FURNACE_GENERATOR_BLOCK).build(null));
+
     }
 }
