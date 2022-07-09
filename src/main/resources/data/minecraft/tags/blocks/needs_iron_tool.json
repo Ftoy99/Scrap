@@ -1,5 +1,7 @@
 {
   "replace": false,
   "values": [
+    "scrap:machine_chassis_block",
+    "scrap:furnace_generator_block"
   ]
 }

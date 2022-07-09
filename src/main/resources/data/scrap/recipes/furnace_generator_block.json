@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "minecraft:smooth_stone"
+    },
+    "*": {
+      "item": "scrap:machine_chassis_block"
+    },
+    "@": {
+      "item": "minecraft:blast_furnace"
+    },
+    "$": {
+      "item": "scrap:scrap_ingot"
+    }
+  },
+  "pattern": [
+    "$$$",
+    "#*#",
+    "#@#"
+  ],
+  "result": {
+    "item": "scrap:furnace_generator_block"
+  }
+}

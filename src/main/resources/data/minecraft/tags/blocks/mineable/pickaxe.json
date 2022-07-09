@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "scrap:raw_scrap_block"
+    "scrap:raw_scrap_block",
+    "scrap:ore_washer_block",
+    "scrap:machine_chassis_block",
+    "scrap:furnace_generator_block"
   ]
 }

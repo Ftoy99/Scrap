@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "scrap:scrap_ingot"
+    },
+    "*": {
+      "item": "minecraft:redstone_block"
+    },
+    "@": {
+      "item": "minecraft:smooth_stone"
+    }
+  },
+  "pattern": [
+    "#@#",
+    "@*@",
+    "#@#"
+  ],
+  "result": {
+    "count": 4,
+    "item": "scrap:machine_chassis_block"
+  }
+}

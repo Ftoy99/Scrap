@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "scrap:block/machine_chassis_block"
+    }
+  }
+}
