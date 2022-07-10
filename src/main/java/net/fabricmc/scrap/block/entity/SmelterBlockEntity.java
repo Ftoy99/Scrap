@@ -1,21 +1,31 @@
 package net.fabricmc.scrap.block.entity;
 
 import com.google.common.collect.Maps;
+import net.fabricmc.scrap.Main;
 import net.fabricmc.scrap.item.inventory.ImplementedInventory;
+import net.fabricmc.scrap.recipe.OreWasherRecipe;
 import net.fabricmc.scrap.screens.FurnaceGeneratorScreenHandler;
 import net.fabricmc.scrap.screens.SmelterScreenHandler;
 import net.minecraft.SharedConstants;
+import net.minecraft.block.AbstractFurnaceBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -25,6 +35,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.World;
@@ -33,6 +44,9 @@ import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import static net.minecraft.state.property.Properties.WATERLOGGED;
 
 public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
@@ -45,6 +59,8 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
     protected final PropertyDelegate propertyDelegate;
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
     int progress;
+    private int cost=8;
+    private int maxProgress=200;
 
     public SmelterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SMELTER_BLOCK_ENTITY, pos, state);
@@ -82,47 +98,60 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
 
 
 
-    public static void tick(World world, BlockPos pos, BlockState state, SmelterBlockEntity blockEntity) {
-//        boolean bl = blockEntity.isBurning();
-//        boolean bl2 = false;
-//        if (blockEntity.isBurning()) {
-//            --blockEntity.burnTime;
-//            //If power not full generate power
-//            if (blockEntity.energyStorage.amount < blockEntity.energyStorage.capacity) {
-//                if (blockEntity.generates <= blockEntity.energyStorage.capacity - blockEntity.energyStorage.amount) {
-//                    blockEntity.energyStorage.amount = blockEntity.energyStorage.amount + blockEntity.generates;
-//                }else {
-//                    blockEntity.energyStorage.amount = blockEntity.energyStorage.amount +(blockEntity.energyStorage.capacity-blockEntity.energyStorage.amount);
-//                }
-//
-//            }
-//        }
-//        ItemStack itemStack = blockEntity.inventory.get(0);
-//        boolean bl3 = !blockEntity.inventory.get(0).isEmpty();
-//        boolean bl4 = !itemStack.isEmpty();
-//        if (blockEntity.isBurning() || bl4 && bl3) {
-//            int i = blockEntity.getMaxCountPerStack();
-//            if (!blockEntity.isBurning() && !blockEntity.isFull()) {
-//                blockEntity.fuelTime = blockEntity.burnTime = blockEntity.getFuelTime(itemStack);
-//                if (blockEntity.isBurning()) {
-//                    bl2 = true;
-//                    if (bl4) {
-//                        Item item = itemStack.getItem();
-//                        itemStack.decrement(1);
-//                        if (itemStack.isEmpty()) {
-//                            Item item2 = item.getRecipeRemainder();
-//                            blockEntity.inventory.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        if (bl2) {
-//            SmelterBlockEntity.markDirty(world, pos, state);
-//        }
+    public static void tick(World world, BlockPos pos, BlockState state, SmelterBlockEntity entity) {
+
+            if (hasRecipe(entity)) {
+                if (entity.energyStorage.amount>entity.cost) {
+                    Main.LOGGER.info("Has Recipe");
+                    entity.progress++;
+                    entity.energyStorage.amount -= entity.cost;
+                    if (entity.progress > entity.maxProgress) {
+                        craftItem(entity);
+                    }
+                }
+            } else {
+                entity.resetProgress();
+            }
+
+    }
+    private static void craftItem(SmelterBlockEntity entity) {
+        World world = entity.getWorld();
+        SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
+        for (int i = 0; i < entity.inventory.size(); i++) {
+            inventory.setStack(i, entity.getStack(i));
+        }
+        Optional<SmeltingRecipe> match = world.getRecipeManager()
+                .getFirstMatch(RecipeType.SMELTING, inventory, world);
+
+        if (match.isPresent()) {
+            entity.removeStack(0, 1);
+            entity.setStack(1, new ItemStack(match.get().getOutput().getItem(),
+                    entity.getStack(1).getCount() + 1));
+            entity.resetProgress();
+        }
+    }
+    private void resetProgress() {
+        this.progress = 0;
+    }
+    private static boolean hasRecipe(SmelterBlockEntity entity) {
+        World world = entity.getWorld();
+        SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
+        for (int i = 0; i < entity.inventory.size(); i++) {
+            inventory.setStack(i, entity.getStack(i));
+        }
+        Optional<SmeltingRecipe> match = world.getRecipeManager()
+                .getFirstMatch(RecipeType.SMELTING, inventory, world);
+        return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
+                && canInsertItemIntoOutputSlot(inventory, match.get().getOutput());
     }
     private boolean isFull() {
         return this.energyStorage.amount >= this.energyStorage.capacity;
+    }
+    private static boolean canInsertItemIntoOutputSlot(SimpleInventory inventory, ItemStack output) {
+        return inventory.getStack(1).getItem() == output.getItem() || inventory.getStack(1).isEmpty();
+    }
+    private static boolean canInsertAmountIntoOutputSlot(SimpleInventory inventory) {
+        return inventory.getStack(1).getMaxCount() > inventory.getStack(1).getCount();
     }
 
     @Override

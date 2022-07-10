@@ -8,6 +8,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.render.model.CubeFace;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -19,6 +20,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.Property;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
@@ -34,8 +37,7 @@ import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.EnergyStorageUtil;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
@@ -195,7 +197,6 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
             }
         }
         ItemStack itemStack = blockEntity.inventory.get(0);
-
         boolean bl3 = !blockEntity.inventory.get(0).isEmpty();
         boolean bl4 = !itemStack.isEmpty();
         if (blockEntity.isBurning() || bl4 && bl3) {
@@ -214,24 +215,34 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
                 }
             }
         }
-        Direction adjacentDirection = Direction.SOUTH;
+
+        List<Direction> dirs = new LinkedList<>();
+        dirs.add(Direction.UP);
+        dirs.add(Direction.DOWN);
+        dirs.add(Direction.SOUTH);
+        dirs.add(Direction.EAST);
+        dirs.add(Direction.WEST);
+        dirs.add(Direction.NORTH);
+        for(Direction direction:dirs){
+                pushEnergy(world,pos,blockEntity,direction);
+
+        }
+
+    }
+    public static long pushEnergy(World world,BlockPos pos,FurnaceGeneratorBlockEntity blockEntity,Direction direction){
         @Nullable
-        EnergyStorage maybeStorage = SimpleEnergyStorage.SIDED.find(world,pos.offset(adjacentDirection,1),adjacentDirection);
+        EnergyStorage maybeStorage = SimpleEnergyStorage.SIDED.find(world,pos.offset(direction,1),direction);
         if (maybeStorage == null) {
-            Main.LOGGER.info("NULL");
+            return  0;
         } else {
-            long amountMoved = EnergyStorageUtil.move(
+            return EnergyStorageUtil.move(
                     blockEntity.energyStorage, // from source
                     maybeStorage, // into target
                     blockEntity.energyStorage.maxExtract,
                     null // create a new transaction for this operation
             );
-            Main.LOGGER.info(String.valueOf(amountMoved));
         }
-
-
     }
-
     public static boolean isNonFlammableWood(Item item) {
         return item.getRegistryEntry().isIn(ItemTags.NON_FLAMMABLE_WOOD);
     }

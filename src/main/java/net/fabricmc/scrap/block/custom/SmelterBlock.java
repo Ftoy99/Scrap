@@ -74,6 +74,6 @@ public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.FURNACE_GENERATOR_BLOCK_ENTITY, FurnaceGeneratorBlockEntity::tick);
+        return checkType(type, ModBlockEntities.SMELTER_BLOCK_ENTITY, SmelterBlockEntity::tick);
     }
 }

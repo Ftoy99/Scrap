@@ -26,6 +26,8 @@ public class SmelterScreen extends HandledScreen<SmelterScreenHandler> {
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
         int pow = handler.getEnergyProgress();
         drawTexture(matrices, x + 12, y + 19+50-pow, 176, 50-pow, 8, pow);
+        int prog = handler.getProgress();
+        drawTexture(matrices, x + 75, y + 41, 176, 0, prog, 17);
     }
     @Override
     protected void init() {

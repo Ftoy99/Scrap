@@ -45,7 +45,7 @@ public class SmelterScreenHandler extends ScreenHandler {
     }
 
     public int getEnergyProgress() {
-        int i = 10000;
+        int i = 16000;
         return this.propertyDelegate.get(0) * 50 / i;
     }
 
@@ -86,10 +86,10 @@ public class SmelterScreenHandler extends ScreenHandler {
         int currentEnergy = this.propertyDelegate.get(0);
         if (currentEnergy>1000){
             tooltip+=currentEnergy/1000;
-            tooltip+="KSU/10KSU";
+            tooltip+="KSU/16KSU";
         }else {
             tooltip+=currentEnergy;
-            tooltip+="SU/10KSU";
+            tooltip+="SU/16KSU";
         }
         return tooltip;
     }
@@ -97,5 +97,10 @@ public class SmelterScreenHandler extends ScreenHandler {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 144));
         }
+    }
+
+    public int getProgress() {
+            int i = 200;
+            return this.propertyDelegate.get(1) * 24 / i;
     }
 }

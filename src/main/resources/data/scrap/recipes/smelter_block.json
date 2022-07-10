@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "minecraft:smooth_stone"
+    },
+    "*": {
+      "item": "scrap:machine_chassis_block"
+    },
+    "@": {
+      "item": "minecraft:furnace"
+    },
+    "$": {
+      "item": "scrap:scrap_ingot"
+    }
+  },
+  "pattern": [
+    "$$$",
+    "#*#",
+    "#@#"
+  ],
+  "result": {
+    "item": "scrap:smelter_block"
+  }
+}
