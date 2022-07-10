@@ -25,10 +25,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.api.EnergyStorageUtil;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.LinkedHashMap;
@@ -36,7 +39,7 @@ import java.util.Map;
 
 public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
-    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(10000, 0, 10000) {
+    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(16000, 0, 16000) {
         @Override
         protected void onFinalCommit() {
             markDirty();
@@ -179,21 +182,20 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, FurnaceGeneratorBlockEntity blockEntity) {
-        boolean bl = blockEntity.isBurning();
-        boolean bl2 = false;
         if (blockEntity.isBurning()) {
             --blockEntity.burnTime;
             //If power not full generate power
             if (blockEntity.energyStorage.amount < blockEntity.energyStorage.capacity) {
                 if (blockEntity.generates <= blockEntity.energyStorage.capacity - blockEntity.energyStorage.amount) {
                     blockEntity.energyStorage.amount = blockEntity.energyStorage.amount + blockEntity.generates;
-                }else {
-                    blockEntity.energyStorage.amount = blockEntity.energyStorage.amount +(blockEntity.energyStorage.capacity-blockEntity.energyStorage.amount);
+                } else {
+                    blockEntity.energyStorage.amount = blockEntity.energyStorage.amount + (blockEntity.energyStorage.capacity - blockEntity.energyStorage.amount);
                 }
 
             }
         }
         ItemStack itemStack = blockEntity.inventory.get(0);
+
         boolean bl3 = !blockEntity.inventory.get(0).isEmpty();
         boolean bl4 = !itemStack.isEmpty();
         if (blockEntity.isBurning() || bl4 && bl3) {
@@ -201,21 +203,33 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
             if (!blockEntity.isBurning() && !blockEntity.isFull()) {
                 blockEntity.fuelTime = blockEntity.burnTime = blockEntity.getFuelTime(itemStack);
                 if (blockEntity.isBurning()) {
-                    bl2 = true;
                     if (bl4) {
                         Item item = itemStack.getItem();
                         itemStack.decrement(1);
                         if (itemStack.isEmpty()) {
                             Item item2 = item.getRecipeRemainder();
-                            blockEntity.inventory.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                            blockEntity.inventory.set(0, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
                         }
                     }
                 }
             }
         }
-        if (bl2) {
-            FurnaceGeneratorBlockEntity.markDirty(world, pos, state);
+        Direction adjacentDirection = Direction.SOUTH;
+        @Nullable
+        EnergyStorage maybeStorage = SimpleEnergyStorage.SIDED.find(world,pos.offset(adjacentDirection,1),adjacentDirection);
+        if (maybeStorage == null) {
+            Main.LOGGER.info("NULL");
+        } else {
+            long amountMoved = EnergyStorageUtil.move(
+                    blockEntity.energyStorage, // from source
+                    maybeStorage, // into target
+                    blockEntity.energyStorage.maxExtract,
+                    null // create a new transaction for this operation
+            );
+            Main.LOGGER.info(String.valueOf(amountMoved));
         }
+
+
     }
 
     public static boolean isNonFlammableWood(Item item) {
