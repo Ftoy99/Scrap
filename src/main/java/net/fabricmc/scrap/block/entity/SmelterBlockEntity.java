@@ -99,10 +99,8 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
 
 
     public static void tick(World world, BlockPos pos, BlockState state, SmelterBlockEntity entity) {
-
             if (hasRecipe(entity)) {
                 if (entity.energyStorage.amount>entity.cost) {
-                    Main.LOGGER.info("Has Recipe");
                     entity.progress++;
                     entity.energyStorage.amount -= entity.cost;
                     if (entity.progress > entity.maxProgress) {
@@ -159,7 +157,7 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
         progress = nbt.getInt("furnacegenerator.progress");
-        energyStorage.amount = nbt.getInt("furnacegenerator.energy");
+        energyStorage.amount = nbt.getInt("furnacegenerator.amount");
 
     }
 
@@ -168,7 +166,7 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
         Inventories.writeNbt(nbt, inventory);
         super.writeNbt(nbt);
         nbt.putInt("furnacegenerator.burnTime", progress);
-        nbt.putInt("furnacegenerator.energy", (int) energyStorage.amount);
+        nbt.putInt("furnacegenerator.amount", (int) energyStorage.amount);
     }
 
     @Override

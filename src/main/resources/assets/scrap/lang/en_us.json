@@ -1,7 +1,7 @@
 {
   "itemGroup.scrap.scrap": "Scrap",
 
-
+  "item.scrap.debug_tool": "Debug Tool",
 
   "item.scrap.scrap": "Scrap",
   "item.scrap.scrap_ingot": "Scrap Ingot",
@@ -15,7 +15,13 @@
   "block.scrap.ore_washer_block": "Ore Washer",
   "block.scrap.furnace_generator_block": "Furnace Generator",
   "block.scrap.machine_chassis_block": "Machine Chassis",
-  "block.scrap.smelter_block": "Smelter"
+  "block.scrap.smelter_block": "Smelter",
+
+
+
+
+  "block.scrap.item_duct": "Item Duct",
+  "block.scrap.energy_duct_block": "Energy Duct"
 
 
 

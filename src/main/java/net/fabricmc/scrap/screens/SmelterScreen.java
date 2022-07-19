@@ -25,7 +25,7 @@ public class SmelterScreen extends HandledScreen<SmelterScreenHandler> {
         int y = (height - backgroundHeight) / 2;
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
         int pow = handler.getEnergyProgress();
-        drawTexture(matrices, x + 12, y + 19+50-pow, 176, 50-pow, 8, pow);
+        drawTexture(matrices, x + 12, y + 19+50-pow, 176, 50+17-pow, 8, pow);
         int prog = handler.getProgress();
         drawTexture(matrices, x + 75, y + 41, 176, 0, prog, 17);
     }
@@ -40,7 +40,6 @@ public class SmelterScreen extends HandledScreen<SmelterScreenHandler> {
         renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, delta);
         drawMouseoverTooltip(matrices, mouseX, mouseY);
-
         if (((ScreenHandler)this.handler).getCursorStack().isEmpty() && isPointOverEnergyBar(12,19,mouseX,mouseY)) {
             this.renderTooltip(matrices, Text.literal(handler.getEnergyTooltip()), mouseX, mouseY);
         }

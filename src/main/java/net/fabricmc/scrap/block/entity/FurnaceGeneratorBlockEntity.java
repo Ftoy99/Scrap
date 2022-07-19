@@ -196,6 +196,7 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
 
             }
         }
+
         ItemStack itemStack = blockEntity.inventory.get(0);
         boolean bl3 = !blockEntity.inventory.get(0).isEmpty();
         boolean bl4 = !itemStack.isEmpty();
@@ -216,33 +217,33 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
             }
         }
 
-        List<Direction> dirs = new LinkedList<>();
-        dirs.add(Direction.UP);
-        dirs.add(Direction.DOWN);
-        dirs.add(Direction.SOUTH);
-        dirs.add(Direction.EAST);
-        dirs.add(Direction.WEST);
-        dirs.add(Direction.NORTH);
-        for(Direction direction:dirs){
-                pushEnergy(world,pos,blockEntity,direction);
-
-        }
+//        List<Direction> dirs = new LinkedList<>();
+//        dirs.add(Direction.UP);
+//        dirs.add(Direction.DOWN);
+//        dirs.add(Direction.SOUTH);
+//        dirs.add(Direction.EAST);
+//        dirs.add(Direction.WEST);
+//        dirs.add(Direction.NORTH);
+//        for(Direction direction:dirs){
+//                pushEnergy(world,pos,blockEntity,direction);
+//
+//        }
 
     }
-    public static long pushEnergy(World world,BlockPos pos,FurnaceGeneratorBlockEntity blockEntity,Direction direction){
-        @Nullable
-        EnergyStorage maybeStorage = SimpleEnergyStorage.SIDED.find(world,pos.offset(direction,1),direction);
-        if (maybeStorage == null) {
-            return  0;
-        } else {
-            return EnergyStorageUtil.move(
-                    blockEntity.energyStorage, // from source
-                    maybeStorage, // into target
-                    blockEntity.energyStorage.maxExtract,
-                    null // create a new transaction for this operation
-            );
-        }
-    }
+//    public static long pushEnergy(World world,BlockPos pos,FurnaceGeneratorBlockEntity blockEntity,Direction direction){
+//        @Nullable
+//        EnergyStorage maybeStorage = SimpleEnergyStorage.SIDED.find(world,pos.offset(direction,1),direction);
+//        if (maybeStorage == null) {
+//            return  0;
+//        } else {
+//            return EnergyStorageUtil.move(
+//                    blockEntity.energyStorage, // from source
+//                    maybeStorage, // into target
+//                    blockEntity.energyStorage.maxExtract,
+//                    null // create a new transaction for this operation
+//            );
+//        }
+//    }
     public static boolean isNonFlammableWood(Item item) {
         return item.getRegistryEntry().isIn(ItemTags.NON_FLAMMABLE_WOOD);
     }
@@ -268,25 +269,6 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        Inventories.readNbt(nbt, inventory);
-        burnTime = nbt.getInt("furnacegenerator.burnTime");
-        fuelTime = nbt.getInt("furnacegenerator.fuelTime");
-        energyStorage.amount = nbt.getInt("furnacegenerator.amount");
-
-    }
-
-    @Override
-    public void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, inventory);
-        super.writeNbt(nbt);
-        nbt.putInt("furnacegenerator.burnTime", burnTime);
-        nbt.putInt("furnacegenerator.fuelTime", fuelTime);
-        nbt.putInt("furnacegenerator.amount", (int) energyStorage.amount);
-    }
-
-    @Override
     public DefaultedList<ItemStack> getItems() {
         return inventory;
     }
@@ -302,4 +284,21 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
         return new FurnaceGeneratorScreenHandler(syncId, inv, this, this.propertyDelegate);
     }
 
+    @Override
+    public void writeNbt(NbtCompound nbt) {
+        Inventories.writeNbt(nbt, inventory);
+        super.writeNbt(nbt);
+        nbt.putInt("furnacegenerator.burnTime", burnTime);
+        nbt.putInt("furnacegenerator.fuelTime", fuelTime);
+        nbt.putInt("furnacegenerator.amount", (int) energyStorage.amount);
+    }
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        Inventories.readNbt(nbt, inventory);
+        burnTime = nbt.getInt("furnacegenerator.burnTime");
+        fuelTime = nbt.getInt("furnacegenerator.fuelTime");
+        energyStorage.amount = nbt.getInt("furnacegenerator.amount");
+
+    }
 }

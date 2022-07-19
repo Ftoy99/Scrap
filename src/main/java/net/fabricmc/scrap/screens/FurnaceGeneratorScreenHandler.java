@@ -56,7 +56,7 @@ public class FurnaceGeneratorScreenHandler extends ScreenHandler {
         return this.propertyDelegate.get(0) * 13 / i;
     }
     public int getEnergyProgress() {
-        int i = 10000;
+        int i = 16000;
         return this.propertyDelegate.get(2) * 50 / i;
     }
 

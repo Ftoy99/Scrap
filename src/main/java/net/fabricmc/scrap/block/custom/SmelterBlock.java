@@ -55,7 +55,6 @@ public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider
             if (screenHandlerFactory!=null){
                 player.openHandledScreen(screenHandlerFactory);
             }
-
         }
         return ActionResult.SUCCESS;
     }
