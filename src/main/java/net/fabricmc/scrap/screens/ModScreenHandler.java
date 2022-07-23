@@ -22,4 +22,8 @@ public class ModScreenHandler {
     public static ScreenHandlerType<CrusherScreenHandler> CRUSHER_SCREEN_HANDLER =
             ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "crusher"),
                     CrusherScreenHandler::new);
+
+    public static ScreenHandlerType<AlloySmelterScreenHandler> ALLOY_SMELTER_SCREEN_HANDLER =
+            ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "alloy_smelter"),
+                    AlloySmelterScreenHandler::new);
 }

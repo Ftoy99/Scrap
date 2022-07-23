@@ -11,12 +11,12 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
-public class CrushingRecipe implements Recipe<SimpleInventory> {
+public class CrushingRecipes implements Recipe<SimpleInventory> {
     private final Identifier id;
     private final ItemStack output;
     private final DefaultedList<Ingredient> recipeItems;
 
-    public CrushingRecipe(Identifier id, ItemStack output, DefaultedList<Ingredient> recipeItems) {
+    public CrushingRecipes(Identifier id, ItemStack output, DefaultedList<Ingredient> recipeItems) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
@@ -60,19 +60,20 @@ public class CrushingRecipe implements Recipe<SimpleInventory> {
         return Type.INSTANCE;
     }
 
-    public static class Type implements RecipeType<CrushingRecipe> {
+    public static class Type implements RecipeType<CrushingRecipes> {
         public static final Type INSTANCE = new Type();
         public static final String ID = "crushing";
+
         private Type() {
         }
     }
 
-    public static class Serializer implements RecipeSerializer<CrushingRecipe> {
+    public static class Serializer implements RecipeSerializer<CrushingRecipes> {
         public static final Serializer INSTANCE = new Serializer();
         public static final String ID = "crushing";
 
         @Override
-        public CrushingRecipe read(Identifier id, JsonObject json) {
+        public CrushingRecipes read(Identifier id, JsonObject json) {
             ItemStack output = ShapedRecipe.outputFromJson(JsonHelper.getObject(json, "output"));
             JsonArray ingredients = JsonHelper.getArray(json, "ingredients");
             DefaultedList<Ingredient> inputs = DefaultedList.ofSize(1, Ingredient.EMPTY);
@@ -81,11 +82,11 @@ public class CrushingRecipe implements Recipe<SimpleInventory> {
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new CrushingRecipe(id,output,inputs);
+            return new CrushingRecipes(id, output, inputs);
         }
 
         @Override
-        public CrushingRecipe read(Identifier id, PacketByteBuf buf) {
+        public CrushingRecipes read(Identifier id, PacketByteBuf buf) {
             DefaultedList<Ingredient> inputs = DefaultedList.ofSize(buf.readInt(), Ingredient.EMPTY);
 
             for (int i = 0; i < inputs.size(); i++) {
@@ -93,11 +94,11 @@ public class CrushingRecipe implements Recipe<SimpleInventory> {
             }
 
             ItemStack output = buf.readItemStack();
-            return new CrushingRecipe(id, output, inputs);
+            return new CrushingRecipes(id, output, inputs);
         }
 
         @Override
-        public void write(PacketByteBuf buf, CrushingRecipe recipe) {
+        public void write(PacketByteBuf buf, CrushingRecipes recipe) {
             buf.writeInt(recipe.getIngredients().size());
             for (Ingredient ing : recipe.getIngredients()) {
                 ing.write(buf);
