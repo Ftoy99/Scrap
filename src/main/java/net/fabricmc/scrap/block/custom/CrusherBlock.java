@@ -1,5 +1,6 @@
 package net.fabricmc.scrap.block.custom;
 
+import net.fabricmc.scrap.block.entity.CrusherBlockEntity;
 import net.fabricmc.scrap.block.entity.FurnaceGeneratorBlockEntity;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
 import net.fabricmc.scrap.block.entity.SmelterBlockEntity;
@@ -21,9 +22,11 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider {
+public class CrusherBlock extends BlockWithEntity implements BlockEntityProvider {
+
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
-    public SmelterBlock(Settings settings) {
+
+    public CrusherBlock(Settings settings) {
         super(settings);
         this.setDefaultState((BlockState)((BlockState)((this.stateManager.getDefaultState()).with(FACING, Direction.NORTH))));
     }
@@ -41,7 +44,7 @@ public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new SmelterBlockEntity(pos,state);
+        return new CrusherBlockEntity(pos,state);
     }
     @Override
     public BlockRenderType getRenderType(BlockState state) {
@@ -62,8 +65,8 @@ public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof SmelterBlockEntity) {
-                ItemScatterer.spawn(world, pos, (SmelterBlockEntity)blockEntity);
+            if (blockEntity instanceof CrusherBlockEntity) {
+                ItemScatterer.spawn(world, pos, (CrusherBlockEntity)blockEntity);
                 world.updateComparators(pos,this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -73,6 +76,6 @@ public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.SMELTER_BLOCK_ENTITY, SmelterBlockEntity::tick);
+        return checkType(type, ModBlockEntities.CRUSHER_BLOCK_ENTITY, CrusherBlockEntity::tick);
     }
 }

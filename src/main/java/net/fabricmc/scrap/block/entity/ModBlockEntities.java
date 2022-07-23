@@ -22,6 +22,7 @@ public class ModBlockEntities {
     public static BlockEntityType<OreWasherBlockEntity> ORE_WASHER_BLOCK_ENTITY;
     public static BlockEntityType<FurnaceGeneratorBlockEntity> FURNACE_GENERATOR_BLOCK_ENTITY;
     public static BlockEntityType<SmelterBlockEntity> SMELTER_BLOCK_ENTITY;
+    public static BlockEntityType<CrusherBlockEntity> CRUSHER_BLOCK_ENTITY;
 
     public static void registerBlockEntities() {
         //Ore Washer
@@ -50,6 +51,13 @@ public class ModBlockEntities {
                                 ModBlocks.SMELTER_BLOCK).build(null));
 
         SimpleEnergyStorage.SIDED.registerForBlockEntity((myBlockEntity, direction) -> myBlockEntity.energyStorage, SMELTER_BLOCK_ENTITY);
+
+        //Crusher
+        CRUSHER_BLOCK_ENTITY=Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Main.MOD_ID, "crusher_block"),
+                        FabricBlockEntityTypeBuilder.create(CrusherBlockEntity::new,
+                                ModBlocks.CRUSHER_BLOCK).build(null));
+
+        SimpleEnergyStorage.SIDED.registerForBlockEntity((myBlockEntity, direction) -> myBlockEntity.energyStorage, CRUSHER_BLOCK_ENTITY);
 
     }
 }

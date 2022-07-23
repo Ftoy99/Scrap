@@ -14,7 +14,12 @@ public class ModScreenHandler {
     public static ScreenHandlerType<FurnaceGeneratorScreenHandler> FURNACE_GENERATOR_SCREEN_HANDLER =
             ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "furnace_generator"),
                     FurnaceGeneratorScreenHandler::new);
+
     public static ScreenHandlerType<SmelterScreenHandler> SMELTER_SCREEN_HANDLER =
             ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "smelter"),
                     SmelterScreenHandler::new);
+
+    public static ScreenHandlerType<CrusherScreenHandler> CRUSHER_SCREEN_HANDLER =
+            ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "crusher"),
+                    CrusherScreenHandler::new);
 }

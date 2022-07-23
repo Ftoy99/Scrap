@@ -12,10 +12,18 @@ public class ModRecipes {
         Main.LOGGER.info("Registering Mod Recipes for "+Main.MOD_ID);
         registerRecipes();
     }
+
     public static void registerRecipes() {
         Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Main.MOD_ID, OreWasherRecipe.Serializer.ID),
                 OreWasherRecipe.Serializer.INSTANCE);
+
         Registry.register(Registry.RECIPE_TYPE, new Identifier(Main.MOD_ID, OreWasherRecipe.Type.ID),
                 OreWasherRecipe.Type.INSTANCE);
+
+        Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Main.MOD_ID, CrushingRecipe.Serializer.ID),
+                CrushingRecipe.Serializer.INSTANCE);
+
+        Registry.register(Registry.RECIPE_TYPE, new Identifier(Main.MOD_ID, CrushingRecipe.Type.ID),
+                CrushingRecipe.Type.INSTANCE);
     }
 }

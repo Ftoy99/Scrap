@@ -1,6 +1,6 @@
 {
 	"parent": "minecraft:block/cube_all",
 	"textures" : {
-		"all" : "scrap:block/machine_side"
+		"all" : "scrap:block/cells/creative/creative_energy_cell"
 	}
 }

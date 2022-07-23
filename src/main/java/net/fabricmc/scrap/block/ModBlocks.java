@@ -3,6 +3,7 @@ package net.fabricmc.scrap.block;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.scrap.Main;
+import net.fabricmc.scrap.block.custom.CrusherBlock;
 import net.fabricmc.scrap.block.custom.FurnaceGeneratorBlock;
 import net.fabricmc.scrap.block.custom.OreWasherBlock;
 import net.fabricmc.scrap.block.custom.SmelterBlock;
@@ -32,6 +33,8 @@ public class ModBlocks{
     public static final Block FURNACE_GENERATOR_BLOCK = registerBlock("furnace_generator_block",new FurnaceGeneratorBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
     public static final Block SMELTER_BLOCK = registerBlock("smelter_block",new SmelterBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
+    public static final Block CRUSHER_BLOCK = registerBlock("crusher_block",new CrusherBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
     public static final Block ITEM_DUCT = registerBlock("item_duct_block",new ItemDuct(0.2500f,FabricBlockSettings.of(Material.GLASS).strength(2.0F, 2.0F)), ModItemGroup.SCRAP);
 

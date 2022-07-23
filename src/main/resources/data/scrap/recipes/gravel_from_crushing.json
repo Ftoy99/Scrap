@@ -1,0 +1,11 @@
+{
+  "type": "scrap:crushing",
+  "ingredients": [
+    {
+      "item": "minecraft:cobblestone"
+    }
+  ],
+  "output": {
+    "item": "minecraft:gravel"
+  }
+}
