@@ -1,10 +1,10 @@
 {
   "parent": "minecraft:block/orientable",
   "textures": {
-    "front": "scrap:block/smelter_front",
-    "side": "scrap:block/smelter_side",
-    "top": "scrap:block/smelter_side",
-    "bottom": "scrap:block/smelter_side"
+    "front": "scrap:block/smelter/smelter_front",
+    "side": "scrap:block/common/machine_side",
+    "top": "scrap:block/common/machine_top",
+    "bottom": "scrap:block/common/machine_top"
   }
 }
 

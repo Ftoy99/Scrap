@@ -18,13 +18,21 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class ModBlocks{
-    public static final Block SCRAP_BLOCK = registerBlock("raw_scrap_block",new Block(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
+    public static final Block RAW_SCRAP_BLOCK = registerBlock("raw_scrap_block",new Block(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
+    public static final Block SCRAP_BLOCK = registerBlock("scrap_block",new Block(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
     public static final Block MACHINE_CHASSIS = registerBlock("machine_chassis_block",new Block(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
+    public static final Block CREATIVE_ENERGY_CELL = registerBlock("creative_energy_cell_block",new Block(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
     public static final Block ORE_WASHER_BLOCK = registerBlock("ore_washer_block",new OreWasherBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
     public static final Block FURNACE_GENERATOR_BLOCK = registerBlock("furnace_generator_block",new FurnaceGeneratorBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
     public static final Block SMELTER_BLOCK = registerBlock("smelter_block",new SmelterBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
     public static final Block ITEM_DUCT = registerBlock("item_duct_block",new ItemDuct(0.2500f,FabricBlockSettings.of(Material.GLASS).strength(2.0F, 2.0F)), ModItemGroup.SCRAP);
 
     public static final Block ENERGY_DUCT_BLOCK = registerBlock("energy_duct_block",new EnergyDuctBlock(0.2500f,FabricBlockSettings.of(Material.GLASS).strength(2.0F, 2.0F)), ModItemGroup.SCRAP);

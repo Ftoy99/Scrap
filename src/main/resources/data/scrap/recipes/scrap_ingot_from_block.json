@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "scrap",
+  "ingredients": [
+    {
+      "item": "scrap:scrap_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "item": "scrap:scrap_ingot"
+  }
+}
