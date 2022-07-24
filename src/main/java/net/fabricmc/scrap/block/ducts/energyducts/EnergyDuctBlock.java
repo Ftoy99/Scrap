@@ -68,7 +68,7 @@ public class EnergyDuctBlock extends Ducts{
             world.createAndScheduleBlockTick(pos, this, 1);
             return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
         }
-        boolean bl = neighborState.isOf(this) || neighborState.isOf(ModBlocks.ITEM_DUCT) || canConnect(neighborPos,(World)world);
+        boolean bl = neighborState.isOf(this) || neighborState.isOf(ModBlocks.ENERGY_DUCT_BLOCK) || canConnect(neighborPos,(World)world);
         return state.with(FACING_PROPERTIES.get(direction), bl);
     }
 

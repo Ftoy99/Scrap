@@ -12,18 +12,21 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.world.World;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class AlloySmelterScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final World world;
     private final PropertyDelegate propertyDelegate;
 
     public AlloySmelterScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(2),new ArrayPropertyDelegate(2));
+        this(syncId, playerInventory, new SimpleInventory(3), new ArrayPropertyDelegate(5));
     }
 
     public AlloySmelterScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate) {
         super(ModScreenHandler.ALLOY_SMELTER_SCREEN_HANDLER, syncId);
-        checkSize(inventory, 2);
+        checkSize(inventory, 3);
         this.inventory = inventory;
         this.world = playerInventory.player.world;
         inventory.onOpen(playerInventory.player);
@@ -32,7 +35,7 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
         // Our Slots
         this.addSlot(new Slot(inventory, 0, 44, 36));
         this.addSlot(new Slot(inventory, 1, 66, 36));
-        this.addSlot(new ScrapOutputSlot(playerInventory.player,inventory, 2, 134, 36));
+        this.addSlot(new ScrapOutputSlot(playerInventory.player, inventory, 2, 134, 36));
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
         this.addProperties(propertyDelegate);
@@ -44,7 +47,7 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
     }
 
     public int getEnergyProgress() {
-        int i = 16000;
+        int i = this.propertyDelegate.get(1);
         return this.propertyDelegate.get(0) * 50 / i;
     }
 
@@ -80,18 +83,25 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
             }
         }
     }
-    public String getEnergyTooltip(){
+
+    public String getEnergyTooltip() {
         String tooltip = "";
         int currentEnergy = this.propertyDelegate.get(0);
-        if (currentEnergy>1000){
-            tooltip+=currentEnergy/1000;
-            tooltip+="KSU/16KSU";
-        }else {
-            tooltip+=currentEnergy;
-            tooltip+="SU/16KSU";
+        NumberFormat formatter = new DecimalFormat("0.0");
+        if (currentEnergy > 1000) {
+
+            String current = formatter.format((float) currentEnergy / 1000);
+            String capacity = formatter.format((float) this.propertyDelegate.get(1) / 1000);
+            tooltip += current + "KSU/" + capacity + "KSU";
+        } else {
+
+            tooltip += currentEnergy;
+            String capacity = formatter.format((float) this.propertyDelegate.get(1) / 1000);
+            tooltip += "SU/" + capacity + "KSU";
         }
         return tooltip;
     }
+
     private void addPlayerHotbar(PlayerInventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 144));
@@ -99,7 +109,11 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
     }
 
     public int getProgress() {
-            int i = 200;
-            return this.propertyDelegate.get(1) * 24 / i;
+        if (this.propertyDelegate.get(4) > 0) {
+            return this.propertyDelegate.get(2) * 24 / this.propertyDelegate.get(4);
+        } else {
+            return 0;
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 package net.fabricmc.scrap.block.entity;
 
 import net.fabricmc.scrap.item.inventory.ImplementedInventory;
+import net.fabricmc.scrap.recipe.AlloyingRecipes;
 import net.fabricmc.scrap.screens.AlloySmelterScreenHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -10,8 +11,6 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -34,9 +33,9 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
     };
     protected final PropertyDelegate propertyDelegate;
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
-    int progress;
-    private int cost=8;
-    private int maxProgress=200;
+    private int progress;
+    private int cost;
+    private int maxProgress;
 
     public AlloySmelterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ALLOY_SMELTER_BLOCK_ENTITY, pos, state);
@@ -46,7 +45,13 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
                     case 0:
                         return (int) AlloySmelterBlockEntity.this.energyStorage.amount;
                     case 1:
+                        return (int) AlloySmelterBlockEntity.this.energyStorage.capacity;
+                    case 2:
                         return AlloySmelterBlockEntity.this.progress;
+                    case 3:
+                        return AlloySmelterBlockEntity.this.cost;
+                    case 4:
+                        return AlloySmelterBlockEntity.this.maxProgress;
                     default:
                         return 0;
                 }
@@ -57,8 +62,14 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
                     case 0:
                         AlloySmelterBlockEntity.this.energyStorage.amount = value;
                         break;
-                    case 1:
+                    case 2:
                         AlloySmelterBlockEntity.this.progress = value;
+                        break;
+                    case 3:
+                        AlloySmelterBlockEntity.this.cost = value;
+                        break;
+                    case 4:
+                        AlloySmelterBlockEntity.this.maxProgress = value;
                         break;
                     default:
                         break;
@@ -66,7 +77,7 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
             }
 
             public int size() {
-                return 2;
+                return 5;
             }
         };
     }
@@ -76,10 +87,13 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
 
     public static void tick(World world, BlockPos pos, BlockState state, AlloySmelterBlockEntity entity) {
             if (hasRecipe(entity)) {
-                if (entity.energyStorage.amount>entity.cost) {
+                AlloyingRecipes recipe = getRecipe(entity);
+                entity.maxProgress = recipe.getTime();
+                entity.cost = recipe.getConsumption();
+                if (entity.energyStorage.amount>recipe.getConsumption()) {
                     entity.progress++;
-                    entity.energyStorage.amount -= entity.cost;
-                    if (entity.progress > entity.maxProgress) {
+                    entity.energyStorage.amount -= recipe.getConsumption();
+                    if (entity.progress >= recipe.getTime()) {
                         craftItem(entity);
                     }
                 }
@@ -94,55 +108,81 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
         for (int i = 0; i < entity.inventory.size(); i++) {
             inventory.setStack(i, entity.getStack(i));
         }
-        Optional<SmeltingRecipe> match = world.getRecipeManager()
-                .getFirstMatch(RecipeType.SMELTING, inventory, world);
-
+        Optional<AlloyingRecipes> match = world.getRecipeManager()
+                .getFirstMatch(AlloyingRecipes.Type.INSTANCE, inventory, world);
+        //Remove items when crafted from input slots
         if (match.isPresent()) {
-            entity.removeStack(0, 1);
-            entity.setStack(1, new ItemStack(match.get().getOutput().getItem(),
-                    entity.getStack(1).getCount() + 1));
+            if (entity.getStack(0).getItem()==match.get().getInput1().getItem()){
+                entity.removeStack(0, match.get().getInput1().getCount());
+                entity.removeStack(1, match.get().getInput2().getCount());
+            }else {
+                entity.removeStack(1, match.get().getInput1().getCount());
+                entity.removeStack(0, match.get().getInput2().getCount());
+            }
+            //Add item to output slot
+            entity.setStack(2, new ItemStack(match.get().getOutput().getItem(),
+                    entity.getStack(2).getCount() + match.get().getOutput().getCount()));
             entity.resetProgress();
         }
     }
     private void resetProgress() {
         this.progress = 0;
+        this.maxProgress =0;
+        this.cost = 0;
     }
+
     private static boolean hasRecipe(AlloySmelterBlockEntity entity) {
         World world = entity.getWorld();
         SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
         for (int i = 0; i < entity.inventory.size(); i++) {
             inventory.setStack(i, entity.getStack(i));
         }
-        Optional<SmeltingRecipe> match = world.getRecipeManager()
-                .getFirstMatch(RecipeType.SMELTING, inventory, world);
+        Optional<AlloyingRecipes> match = world.getRecipeManager()
+                .getFirstMatch(AlloyingRecipes.Type.INSTANCE, inventory, world);
         return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
                 && canInsertItemIntoOutputSlot(inventory, match.get().getOutput());
     }
+
+    private static AlloyingRecipes getRecipe(AlloySmelterBlockEntity entity){
+        World world = entity.getWorld();
+        SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
+        for (int i = 0; i < entity.inventory.size(); i++) {
+            inventory.setStack(i, entity.getStack(i));
+        }
+        return world.getRecipeManager()
+                .getFirstMatch(AlloyingRecipes.Type.INSTANCE, inventory, world).get();
+    }
+
     private boolean isFull() {
         return this.energyStorage.amount >= this.energyStorage.capacity;
     }
+
     private static boolean canInsertItemIntoOutputSlot(SimpleInventory inventory, ItemStack output) {
-        return inventory.getStack(1).getItem() == output.getItem() || inventory.getStack(1).isEmpty();
+        return inventory.getStack(2).getItem() == output.getItem() || inventory.getStack(2).isEmpty();
     }
+
     private static boolean canInsertAmountIntoOutputSlot(SimpleInventory inventory) {
-        return inventory.getStack(1).getMaxCount() > inventory.getStack(1).getCount();
+        return inventory.getStack(2).getMaxCount() > inventory.getStack(2).getCount();
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        progress = nbt.getInt("furnacegenerator.progress");
-        energyStorage.amount = nbt.getInt("furnacegenerator.amount");
-
+        progress = nbt.getInt("alloysmelter.progress");
+        energyStorage.amount = nbt.getInt("alloysmelter.amount");
+        cost = nbt.getInt("alloysmelter.cost");
+        maxProgress = nbt.getInt("alloysmelter.maxprogress");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
         Inventories.writeNbt(nbt, inventory);
         super.writeNbt(nbt);
-        nbt.putInt("furnacegenerator.burnTime", progress);
-        nbt.putInt("furnacegenerator.amount", (int) energyStorage.amount);
+        nbt.putInt("alloysmelter.progress", progress);
+        nbt.putInt("alloysmelter.amount", (int) energyStorage.amount);
+        nbt.putInt("alloysmelter.cost",cost);
+        nbt.putInt("alloysmelter.maxprogress",maxProgress);
     }
 
     @Override

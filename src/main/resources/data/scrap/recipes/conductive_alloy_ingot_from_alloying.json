@@ -1,0 +1,17 @@
+{
+  "type": "scrap:alloying",
+  "time": 200,
+  "consumption": 20,
+  "input1": {
+    "item": "minecraft:copper_ingot",
+    "count": 1
+  },
+  "input2": {
+    "item": "minecraft:redstone",
+    "count": 2
+  },
+  "output": {
+    "item": "scrap:conductive_alloy_ingot",
+    "count": 1
+  }
+}
