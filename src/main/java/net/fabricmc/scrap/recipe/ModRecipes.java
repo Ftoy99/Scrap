@@ -24,6 +24,6 @@ public class ModRecipes {
                 CrushingRecipes.Type.INSTANCE);
 
         Registry.register(Registry.RECIPE_TYPE, new Identifier(Main.MOD_ID, AlloyingRecipes.Type.ID),
-                CrushingRecipes.Type.INSTANCE);
+                AlloyingRecipes.Type.INSTANCE);
     }
 }

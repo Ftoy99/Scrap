@@ -17,6 +17,7 @@ public class ModItems {
     public static final Item WASHED_RAW_COPPER =registerItem("washed_raw_copper",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static final Item DEBUG_TOOL =registerItem("debug_tool",new DebugToolItem(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(1)));
     public static final Item SCRAP_NUGGET =registerItem("scrap_nugget",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
+    public static final Item CONDUCTIVE_ALLOY_INGOT =registerItem("conductive_alloy_ingot",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static void registerModItems(){
         Main.LOGGER.info("Registering Mod Items for "+Main.MOD_ID);
     }
