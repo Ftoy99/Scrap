@@ -54,6 +54,7 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
     @Override
     public ItemStack transferSlot(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
+        //Get the transfer slot
         Slot slot = this.slots.get(invSlot);
         if (slot != null && slot.hasStack()) {
             ItemStack originalStack = slot.getStack();
@@ -62,7 +63,8 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
                 if (!this.insertItem(originalStack, this.inventory.size(), this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.insertItem(originalStack, 0, this.inventory.size(), false)) {
+                //Change this 2 to not allow quick transfer to output
+            } else if (!this.insertItem(originalStack, 0, 2, false)) {
                 return ItemStack.EMPTY;
             }
 
