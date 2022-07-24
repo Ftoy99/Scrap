@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "scrap:machine_chassis_block",
-    "scrap:furnace_generator_block"
+    "scrap:furnace_generator_block",
+    "scrap:smelter_block",
+    "scrap:crusher_block",
+    "scrap:alloy_smelter_block"
   ]
 }
