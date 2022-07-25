@@ -1,7 +1,7 @@
-package net.fabricmc.scrap.block.entity;
+package net.fabricmc.scrap.block.entity.ducts.energyducts;
 
-import net.fabricmc.scrap.Main;
 import net.fabricmc.scrap.block.ModBlocks;
+import net.fabricmc.scrap.block.entity.ModBlockEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnergyDuctBlockEntity extends BlockEntity {
-    public static final int maxExtract = 16;
-    public static final int maxInsert = 16;
+    public static final int maxExtract = 64;
+    public static final int maxInsert = 64;
 
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(512, maxInsert, maxExtract) {
         @Override
@@ -91,18 +91,17 @@ public class EnergyDuctBlockEntity extends BlockEntity {
             //Insert Energy
             int insertTargets = insertMachine.size() + insertCable.size();
             if (insertTargets > 0) {
-                long maxInsertAmount = maxInsert / insertTargets;
                 for (EnergyStorage insertTarget : insertMachine) {
                     EnergyStorageUtil.move(
                             myStorage, // from source
                             insertTarget, // into target
-                            maxInsertAmount,
+                            maxInsert,
                             null // create a new transaction for this operation
                     );
                 }
 
                 for (EnergyStorage insertTarget : insertCable) {
-                    if ((insertTarget.getAmount() + maxInsertAmount) > (myStorage.getAmount() - maxInsertAmount)) {
+                    if ((insertTarget.getAmount() + maxInsert) > (myStorage.getAmount() - maxInsert)) {
                         long insertAmount = (myStorage.getAmount()-insertTarget.getAmount())/2;
                         if (insertAmount>0){
                             EnergyStorageUtil.move(
@@ -116,7 +115,7 @@ public class EnergyDuctBlockEntity extends BlockEntity {
                         EnergyStorageUtil.move(
                                 myStorage, // from source
                                 insertTarget, // into target
-                                maxInsertAmount,
+                                maxInsert,
                                 null // create a new transaction for this operation
                         );
                     }
@@ -126,12 +125,11 @@ public class EnergyDuctBlockEntity extends BlockEntity {
 
             //Extract Energy from neighboors
             if (extractFrom.size() > 0) {
-                int extractAmount = maxInsert / extractFrom.size();
                 for (EnergyStorage extractTarget : extractFrom) {
                     EnergyStorageUtil.move(
                             extractTarget, // from source
                             myStorage, // into target
-                            extractAmount,
+                            maxExtract,
                             null // create a new transaction for this operation
                     );
                 }

@@ -4,7 +4,9 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.scrap.Main;
 import net.fabricmc.scrap.block.custom.*;
+import net.fabricmc.scrap.block.ducts.energyducts.ConductiveEnergyDuctBlock;
 import net.fabricmc.scrap.block.ducts.energyducts.EnergyDuctBlock;
+import net.fabricmc.scrap.block.entity.ducts.energyducts.ConductiveEnergyDuctBlockEntity;
 import net.fabricmc.scrap.item.ModItemGroup;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
@@ -35,6 +37,8 @@ public class ModBlocks{
     public static final Block ALLOY_SMELTER_BLOCK = registerBlock("alloy_smelter_block",new AlloySmelterBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
     public static final Block ENERGY_DUCT_BLOCK = registerBlock("energy_duct_block",new EnergyDuctBlock(0.2500f,FabricBlockSettings.of(Material.GLASS).strength(2.0F, 2.0F)), ModItemGroup.SCRAP);
+
+    public static final Block CONDUCTIVE_ENERGY_DUCT_BLOCK = registerBlock("conductive_energy_duct_block",new ConductiveEnergyDuctBlock(0.2500f,FabricBlockSettings.of(Material.GLASS).strength(2.0F, 2.0F)), ModItemGroup.SCRAP);
 
     public static Block registerBlock(String name, Block block, ItemGroup group){
         registerBlockItem(name,block,group);

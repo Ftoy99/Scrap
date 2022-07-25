@@ -1,0 +1,16 @@
+{
+    "ambientocclusion": false,
+    "textures": {
+        "texture": "scrap:block/conductive_energy_duct_block",
+        "inside": "scrap:block/conductive_energy_duct_block",
+        "particle": "scrap:block/conductive_energy_duct_block"
+    },
+    "elements": [
+        {   "from": [ 4, 4, 4 ],
+            "to": [ 12, 12, 12 ],
+            "faces": {
+                "north": { "texture": "#inside" }
+            }
+        }
+    ]
+}

@@ -25,7 +25,8 @@
 
 
 
-  "block.scrap.energy_duct_block": "Energy Duct"
+  "block.scrap.energy_duct_block": "Energy Duct",
+  "block.scrap.conductive_energy_duct_block": "Energy Duct"
 
 
 

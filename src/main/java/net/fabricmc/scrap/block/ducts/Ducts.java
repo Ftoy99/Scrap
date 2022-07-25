@@ -22,6 +22,7 @@ public abstract class Ducts extends BlockWithEntity {
     public static final BooleanProperty WEST = Properties.WEST;
     public static final BooleanProperty UP = Properties.UP;
     public static final BooleanProperty DOWN = Properties.DOWN;
+
     public static final Map<Direction, BooleanProperty> FACING_PROPERTIES = ImmutableMap.copyOf(Util.make(Maps.newEnumMap(Direction.class), directions -> {
         directions.put(Direction.NORTH, NORTH);
         directions.put(Direction.EAST, EAST);
