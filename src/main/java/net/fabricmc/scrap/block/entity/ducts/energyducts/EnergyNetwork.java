@@ -9,55 +9,38 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import team.reborn.energy.api.EnergyStorage;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergyStorage {
-    private final long maxInsert = 100000;
-    private final long maxExtract = 100000;
-    private final int id;
-    private final List<ConductiveEnergyDuctBlockEntity> cables = new LinkedList<>();
-    private long capacity = 0;
-    private long amount = 0;
+    public long amount = 0;
+    public long capacity = 0;
+    public long maxInsert = Long.MAX_VALUE;
+    public long maxExtract = Long.MAX_VALUE;
+    public ArrayList<ConductiveEnergyDuctBlockEntity> cables = new ArrayList<>();
+    public BlockPos master;
 
-    public EnergyNetwork() {
-        Random idGen = new Random();
-        this.id = idGen.nextInt();
+    public EnergyNetwork(ConductiveEnergyDuctBlockEntity cable) {
+        master = cable.getPos();
+        cables.add(cable);
+        capacity += cable.getCapacity();
     }
 
-    public int getId() {
-        return id;
+    public BlockPos getMaster() {
+        return master;
     }
 
-    public int getSize() {
-        return cables.size();
-    }
-
-    @Override
-    public long extract(long maxAmount, TransactionContext transaction) {
-        StoragePreconditions.notNegative(maxAmount);
-        long extracted = Math.min(maxExtract, Math.min(maxAmount, amount));
-        if (extracted > 0) {
-            updateSnapshots(transaction);
-            amount -= extracted;
-            return extracted;
-        }
-        return 0;
+    public void setMaster(BlockPos master) {
+        this.master = master;
     }
 
     @Override
-    public long insert(long maxAmount, TransactionContext transaction) {
-        StoragePreconditions.notNegative(maxAmount);
-        long inserted = Math.min(maxInsert, Math.min(maxAmount, capacity - amount));
-        if (inserted > 0) {
-            updateSnapshots(transaction);
-            amount += inserted;
-            return inserted;
-        }
-        return 0;
+    public boolean supportsInsertion() {
+        return amount < capacity;
     }
 
+    @Override
     protected Long createSnapshot() {
         return amount;
     }
@@ -68,13 +51,38 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
     }
 
     @Override
-    public boolean supportsInsertion() {
-        return true;
+    public long insert(long maxAmount, TransactionContext transaction) {
+        StoragePreconditions.notNegative(maxAmount);
+
+        long inserted = Math.min(maxInsert, Math.min(maxAmount, capacity - amount));
+
+        if (inserted > 0) {
+            updateSnapshots(transaction);
+            amount += inserted;
+            return inserted;
+        }
+
+        return 0;
     }
 
     @Override
     public boolean supportsExtraction() {
-        return true;
+        return amount > 0;
+    }
+
+    @Override
+    public long extract(long maxAmount, TransactionContext transaction) {
+        StoragePreconditions.notNegative(maxAmount);
+
+        long extracted = Math.min(maxExtract, Math.min(maxAmount, amount));
+
+        if (extracted > 0) {
+            updateSnapshots(transaction);
+            amount -= extracted;
+            return extracted;
+        }
+
+        return 0;
     }
 
     @Override
@@ -82,68 +90,52 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
         return amount;
     }
 
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
+
     @Override
     public long getCapacity() {
         return capacity;
     }
 
-    //This is broken.
-    public void merge(EnergyNetwork network) {
-        capacity += network.capacity;
-        amount += network.amount;
-        // merge lists
-        for (BlockEntity cable : network.cables) {
-            ConductiveEnergyDuctBlockEntity castCable = (ConductiveEnergyDuctBlockEntity) cable;
-            cables.add(castCable);
-            castCable.setEnergyNetwork(this);
-            castCable.markDirty();
+    public void setCapacity(long capacity) {
+        this.capacity = capacity;
+    }
+
+    public void join(ConductiveEnergyDuctBlockEntity cable) {
+        cables.add(cable);
+        capacity += cable.getCapacity();
+    }
+
+    public void merge(EnergyNetwork netToMerge) {
+        System.out.println("Merging");
+        for (ConductiveEnergyDuctBlockEntity cableToMerge : netToMerge.cables) {
+            cableToMerge.setMasterPos(master);
+            cableToMerge.setEnergyNetwork(this);
+            cableToMerge.setMaster(false);
         }
-        System.out.println("Merged network");
+        cables.addAll(netToMerge.cables);
+        capacity += netToMerge.getCapacity();
+        amount += netToMerge.getAmount();
     }
 
-    public void join(ConductiveEnergyDuctBlockEntity entity) {
-        capacity += ConductiveEnergyDuctBlockEntity.capacity;
-        cables.add(entity);
-    }
-
-    //Works
-    public void quit(BlockPos pos) {
-        if (!cables.isEmpty()) {
-            ConductiveEnergyDuctBlockEntity toRemove=null;
-            for (ConductiveEnergyDuctBlockEntity cable : cables) {
-                if (cable.getPos().equals(pos)) {
-                    toRemove = cable;
-
-                }
-            }
-            if (toRemove != null) {
-                cables.remove(toRemove);
-                capacity -= ConductiveEnergyDuctBlockEntity.capacity;
-                if (cables.size() > 0) {
-                    amount -= amount / cables.size();
-                }
-            }
-
-        }
-    }
-
-    private LinkedList<ConductiveEnergyDuctBlockEntity> findAllNeighbors(ConductiveEnergyDuctBlockEntity firstBlock, World world) {
-        LinkedList<ConductiveEnergyDuctBlockEntity> adjacentBlocks = new LinkedList<ConductiveEnergyDuctBlockEntity>();
+    private LinkedList<ConductiveEnergyDuctBlockEntity> findAllNeighbors(ConductiveEnergyDuctBlockEntity firstBlock, World world, BlockPos cable) {
+        LinkedList<ConductiveEnergyDuctBlockEntity> adjacentBlocks = new LinkedList<>();
         adjacentBlocks.add(firstBlock);
-
         boolean completed = false;
         while (!completed) {
-            //For each block
             //For every Block search for entitys
-            LinkedList<ConductiveEnergyDuctBlockEntity> newBlocks = new LinkedList<ConductiveEnergyDuctBlockEntity>();
+            LinkedList<ConductiveEnergyDuctBlockEntity> newBlocks = new LinkedList<>();
             for (ConductiveEnergyDuctBlockEntity block : adjacentBlocks) {
                 for (Direction direction : Direction.values()) {
                     BlockEntity neighbour = world.getBlockEntity(block.getPos().offset(direction));
-                    if (neighbour != null && neighbour.getType() == block.getType()) {
+                    if (neighbour != null && neighbour.getType() == block.getType() && !newBlocks.contains(neighbour) && !neighbour.getPos().equals(cable)) {
                         newBlocks.add((ConductiveEnergyDuctBlockEntity) neighbour);
                     }
                 }
             }//For each block
+            //If new Blocks where found from previous iteration redo else return.
             completed = true;
             for (ConductiveEnergyDuctBlockEntity block : newBlocks) {
                 if (!adjacentBlocks.contains(block)) {
@@ -155,42 +147,61 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
         return adjacentBlocks;
     }
 
-    //This is broken the new network of the ones that have been split their blocks are random networks .
-    public void split(BlockPos pos, World world) {
-        quit(pos);
-
-        //Split here
-        List<ConductiveEnergyDuctBlockEntity> existingCables = this.cables;
+    public void split(World world, BlockPos cable) {
+        quit(cable);
+        List<ConductiveEnergyDuctBlockEntity> existingCables = cables;
         List<List<ConductiveEnergyDuctBlockEntity>> networks = new LinkedList<>();
         while (!existingCables.isEmpty()) {
-            List<ConductiveEnergyDuctBlockEntity> network = new LinkedList<>();
             ConductiveEnergyDuctBlockEntity firstBlock = existingCables.get(0);
-            existingCables.remove(firstBlock);
-            network = findAllNeighbors(firstBlock, world);
+            List<ConductiveEnergyDuctBlockEntity> network = findAllNeighbors(firstBlock, world, cable);
             for (ConductiveEnergyDuctBlockEntity block : network) {
                 existingCables.remove(block);
             }
             networks.add(network);
         }
-
-
-        //Do the split
         if (networks.size() == 1) {
-            return;
+            List<ConductiveEnergyDuctBlockEntity> net = networks.get(0);
+            ConductiveEnergyDuctBlockEntity master = net.get(0);
+            System.out.println("Selected master:"+master);
+            master.setMaster(true);
+            EnergyNetwork newNet = new EnergyNetwork(master);
+            for (ConductiveEnergyDuctBlockEntity netCable : net) {
+                System.out.println("Setting master");
+                netCable.setEnergyNetwork(newNet);
+                netCable.setMasterPos(master.getPos());
+                newNet.join(netCable);
+            }
+            //set power
+            if (cables.size() != 0) {
+                newNet.amount = (newNet.cables.size() / cables.size()) * amount;
+            }
         } else if (networks.size() > 1) {
-            //For Each network
-            System.out.println("SPLITTED INTO " + networks.size() + " NETWORKS");
-            for (int i = 0; i < networks.size(); i++) {
-                EnergyNetwork network = new EnergyNetwork();
-                //For each cable of network
-                for (int n = 0; n < networks.get(i).size(); n++) {
-                    //set the network to cable
-                    networks.get(i).get(n).setEnergyNetwork(network);
-                    //join the network
-                    network.join(networks.get(i).get(n));
+            for (List<ConductiveEnergyDuctBlockEntity> net : networks) {
+                EnergyNetwork newNet = new EnergyNetwork(net.get(0));
+                net.get(0).setMaster(true);
+                for (ConductiveEnergyDuctBlockEntity netCable : net) {
+                    netCable.setEnergyNetwork(newNet);
+                    netCable.setMasterPos(net.get(0).getPos());
+                    newNet.join(netCable);
                 }
-                //TODO Set new amount for both network and capacity
+                //set power
+                if (cables.size() != 0) {
+                    newNet.amount = (newNet.cables.size() / cables.size()) * amount;
+                }
             }
         }
     }
+
+    public void quit(BlockPos cable) {
+        ConductiveEnergyDuctBlockEntity cableToRemove = null;
+        for (ConductiveEnergyDuctBlockEntity maybeCableToRemove : cables) {
+            if (maybeCableToRemove.getPos().equals(cable)) {
+                cableToRemove = maybeCableToRemove;
+            }
+        }
+        if (cableToRemove != null) {
+            boolean quited = cables.remove(cableToRemove);
+        }
+    }
+
 }
