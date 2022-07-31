@@ -6,7 +6,6 @@ import net.fabricmc.scrap.block.ModBlocks;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
 import net.fabricmc.scrap.item.ModItems;
 import net.fabricmc.scrap.recipe.ModRecipes;
-import net.fabricmc.scrap.world.gen.ModWorldPresets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
