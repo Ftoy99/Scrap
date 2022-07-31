@@ -1,14 +1,8 @@
 package net.fabricmc.scrap.block.ducts.energyducts;
 
-import net.fabricmc.scrap.block.ModBlocks;
 import net.fabricmc.scrap.block.ducts.Ducts;
-import net.fabricmc.scrap.block.entity.ducts.energyducts.EnergyDuctBlockEntity;
-import net.fabricmc.scrap.block.entity.ModBlockEntities;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
@@ -17,20 +11,22 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import team.reborn.energy.api.EnergyStorage;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
+
 import javax.annotation.Nullable;
 
-
-public class EnergyDuctBlock extends Ducts{
-    public EnergyDuctBlock(float radius, Settings settings) {
+public abstract class EnergyDuct extends Ducts {
+    protected EnergyDuct(float radius, Settings settings) {
         super(radius, settings);
         this.setDefaultState((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)this.stateManager.getDefaultState()).with(NORTH, false)).with(EAST, false)).with(SOUTH, false)).with(WEST, false)).with(UP, false)).with(DOWN, false));
-    }
 
+    }
 
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.withConnectionProperties(ctx.getWorld(), ctx.getBlockPos());
     }
+
+
 
     public BlockState withConnectionProperties(World world, BlockPos pos) {
         //TODO refactor this somehow
@@ -54,9 +50,10 @@ public class EnergyDuctBlock extends Ducts{
         EnergyStorage maybeStorage = SimpleEnergyStorage.SIDED.find(world,pos,null);
         if (maybeStorage!=null){
             return true;}
-        System.out.println("False");
         return false;
     }
+
+
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
@@ -64,24 +61,12 @@ public class EnergyDuctBlock extends Ducts{
             world.createAndScheduleBlockTick(pos, this, 1);
             return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
         }
-        boolean bl = neighborState.isOf(this) || neighborState.isOf(ModBlocks.ENERGY_DUCT_BLOCK) || canConnect(neighborPos,(World)world);
+        boolean bl = neighborState.isOf(this) || canConnect(neighborPos,(World)world);
         return state.with(FACING_PROPERTIES.get(direction), bl);
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN);
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new EnergyDuctBlockEntity(pos,state);
-    }
-
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.ENERGY_DUCT_BLOCK_ENTITY, EnergyDuctBlockEntity::tick);
     }
 }

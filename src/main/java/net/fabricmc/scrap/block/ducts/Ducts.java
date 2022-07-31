@@ -14,6 +14,9 @@ import net.minecraft.world.BlockView;
 
 import java.util.Map;
 
+/**
+ * Class used to create duct blocks with connection properties and duct shape.
+ */
 public abstract class Ducts extends BlockWithEntity {
     private static final Direction[] FACINGS = Direction.values();
     public static final BooleanProperty NORTH = Properties.NORTH;

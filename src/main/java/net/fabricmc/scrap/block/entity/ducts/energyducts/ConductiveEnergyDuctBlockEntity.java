@@ -3,6 +3,7 @@ package net.fabricmc.scrap.block.entity.ducts.energyducts;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -13,105 +14,42 @@ import team.reborn.energy.api.base.SimpleEnergyStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ConductiveEnergyDuctBlockEntity extends BlockEntity {
-    public static final int maxExtract = 64;
-    public static final int maxInsert = 64;
-    public static final int capacity = 512;
-    private EnergyNetwork energyNetwork=null;
+    public static int maxExtract = 64;
+    public static int maxInsert = 64;
+    public int capacity = 512;
+    public EnergyNetwork energyNetwork;
+    public BlockPos masterPos;
+    public boolean master;
 
     public ConductiveEnergyDuctBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_BLOCK_ENTITY, pos, state);
+        energyNetwork = null;
+        master = false;
+        masterPos = null;
     }
 
-
-    private static void initNetwork(World world, BlockPos pos, ConductiveEnergyDuctBlockEntity entity) {
-        //Get all neighboors
-        if (world.isClient) {
-            return;
-        }
-        List<ConductiveEnergyDuctBlockEntity> neighboors = new ArrayList<>();
-        for (Direction direction : Direction.values()) {
-            BlockEntity neighboor = world.getBlockEntity(pos.offset(direction, 1));
-            if (neighboor != null) {
-                if (neighboor.getType() == world.getBlockEntity(pos).getType()) {
-                    neighboors.add((ConductiveEnergyDuctBlockEntity) neighboor);
-                }
-            }
-
-        }
-        if (neighboors.size() == 0) {
-            //Create network
-            entity.energyNetwork = new EnergyNetwork();
-            entity.energyNetwork.join(entity);
-            return;
-        } else if (neighboors.size() == 1) {
-            //Join adjacent Networks
-            entity.setEnergyNetwork(neighboors.get(0).getEnergyNetwork());
-            neighboors.get(0).getEnergyNetwork().join(entity);
-            System.out.println("Joined Network" + entity.energyNetwork);
-        } else {
-            //Merge networks
-            List<EnergyNetwork> neighbourNetwork = new ArrayList<>();
-            for (ConductiveEnergyDuctBlockEntity neighbour : neighboors) {
-                if (neighbour.getEnergyNetwork() != null && !neighbourNetwork.contains(neighbour.getEnergyNetwork()))
-                    neighbourNetwork.add(neighbour.getEnergyNetwork());
-            }
-            EnergyNetwork finalNet =neighbourNetwork.get(0);
-            neighbourNetwork.remove(0);
-            for (EnergyNetwork network : neighbourNetwork) {
-                System.out.println("Merging Networks");
-                finalNet.merge(network);
-            }
-            finalNet.join(entity);
-            entity.setEnergyNetwork(finalNet);
-            entity.markDirty();
-
-        }
-    }
 
     public static void tick(World world, BlockPos pos, BlockState state, ConductiveEnergyDuctBlockEntity entity) {
-        if (world.isClient) {
-            return;
-        }
-        if (entity.energyNetwork == null) {
-            initNetwork(world, pos, entity);
-        }
+        checkNetwork(world, entity);
+        if (entity.getEnergyNetwork() != null) {
+            List<EnergyStorage> extractFrom = new ArrayList<>();
+            List<EnergyStorage> insertTo = new ArrayList<>();
 
-
-        List<EnergyStorage> extractFrom = new ArrayList<>();
-        List<EnergyStorage> insertTo = new ArrayList<>();
-
-        //Initialize
-        for (Direction direction : Direction.values()) {
-            EnergyStorage maybeStorage = SimpleEnergyStorage.SIDED.find(world, pos.offset(direction, 1), direction);
-            if (maybeStorage != null) {
-                //Get extraction containers
-                if (maybeStorage.supportsExtraction()) {
-                    extractFrom.add(maybeStorage);
-                }
-                //Get insertion containers and neighboor cables.
-                if (maybeStorage.supportsInsertion()) {
-                    if (maybeStorage.getAmount() < maybeStorage.getCapacity()) {
-                        insertTo.add(maybeStorage);
+            //Initialize
+            for (Direction direction : Direction.values()) {
+                EnergyStorage maybeStorage = SimpleEnergyStorage.SIDED.find(world, pos.offset(direction, 1), direction);
+                if (maybeStorage != null) {
+                    if (maybeStorage.supportsExtraction()) {
+                        extractFrom.add(maybeStorage);
+                    } else if (maybeStorage.supportsInsertion()) {
+                        if (maybeStorage.supportsInsertion()) {
+                            insertTo.add(maybeStorage);
+                        }
                     }
                 }
             }
-        }//Init
-
-//
-//            //Insert Energy
-        for (EnergyStorage insertTarget : insertTo) {
-            EnergyStorageUtil.move(
-                    entity.getEnergyNetwork(), // from source
-                    insertTarget, // into target
-                    maxInsert,
-                    null // create a new transaction for this operation
-            );
-        }
-
-//          //Extract Energy from neighboors
-        if (extractFrom.size() > 0) {
+            //Extract Energy
             for (EnergyStorage extractTarget : extractFrom) {
                 EnergyStorageUtil.move(
                         extractTarget, // from source
@@ -120,8 +58,42 @@ public class ConductiveEnergyDuctBlockEntity extends BlockEntity {
                         null // create a new transaction for this operation
                 );
             }
+            //Insert Energy
+            for (EnergyStorage insertTarget : insertTo) {
+                EnergyStorageUtil.move(
+                        entity.getEnergyNetwork(), // from source
+                        insertTarget, // into target
+                        maxInsert,
+                        null // create a new transaction for this operation
+                );
+            }
+
         }
-//        }
+
+    }
+
+    private static void checkNetwork(World world, ConductiveEnergyDuctBlockEntity entity) {
+        if (entity.masterPos != null && entity.energyNetwork == null) {
+            BlockEntity maybeCable = world.getBlockEntity(entity.masterPos);
+            if (maybeCable != null && maybeCable.getType() == ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_BLOCK_ENTITY) {
+                ConductiveEnergyDuctBlockEntity cable = (ConductiveEnergyDuctBlockEntity) maybeCable;
+                if (cable.getEnergyNetwork() != null) {
+                    entity.setEnergyNetwork(cable.getEnergyNetwork());
+                }
+            }
+        }
+    }
+
+    public int getMaxExtract() {
+        return maxExtract;
+    }
+
+    public int getMaxInsert() {
+        return maxInsert;
+    }
+
+    public int getCapacity() {
+        return capacity;
     }
 
     public EnergyNetwork getEnergyNetwork() {
@@ -132,4 +104,91 @@ public class ConductiveEnergyDuctBlockEntity extends BlockEntity {
         this.energyNetwork = energyNetwork;
     }
 
+    public BlockPos getMasterPos() {
+        return masterPos;
+    }
+
+    public void setMasterPos(BlockPos masterPos) {
+        this.masterPos = masterPos;
+    }
+
+    public boolean isMaster() {
+        return master;
+    }
+
+    public void setMaster(boolean master) {
+        this.master = master;
+    }
+
+    public void initializeNetwork() {
+        if (!this.getWorld().isClient) {
+            List<ConductiveEnergyDuctBlockEntity> neighbours = this.getNeighbours();
+            List<EnergyNetwork> neighbourNets = new ArrayList<>();
+            for (ConductiveEnergyDuctBlockEntity neighbour:neighbours){
+                if(neighbour.getEnergyNetwork()!=null && !neighbourNets.contains(neighbour.getEnergyNetwork())){
+                    neighbourNets.add(neighbour.getEnergyNetwork());
+                }
+            }
+            System.out.println("Size"+neighbours.size());
+            if (neighbourNets.isEmpty()) {
+                //create new net
+                EnergyNetwork net = new EnergyNetwork(this);
+                energyNetwork = net;
+                master = true;
+            } else if (neighbourNets.size() == 1) {
+                //join network
+                EnergyNetwork neighbour = neighbourNets.get(0);
+                energyNetwork = neighbour;
+                masterPos = energyNetwork.getMaster();
+                energyNetwork.join(this);
+            } else if (neighbourNets.size() > 1) {
+                List<EnergyNetwork> nets = new ArrayList<>();
+                EnergyNetwork net = new EnergyNetwork(this);
+                energyNetwork = net;
+                master = true;
+                for (EnergyNetwork netToMerge:neighbourNets){
+                    energyNetwork.merge(netToMerge);
+                }
+            }
+        }
+    }
+
+    public List<ConductiveEnergyDuctBlockEntity> getNeighbours() {
+        List<ConductiveEnergyDuctBlockEntity> neighbours = new ArrayList<>();
+        if (this.getWorld() != null && !this.getWorld().isClient) {
+            for (Direction direction : Direction.values()) {
+                BlockEntity maybeCable = world.getBlockEntity(this.getPos().offset(direction));
+                if (maybeCable != null && maybeCable.getType() == this.getType()) {
+                    neighbours.add((ConductiveEnergyDuctBlockEntity) maybeCable);
+                }
+            }
+        }
+        return neighbours;
+    }
+
+    @Override
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        nbt.putBoolean("cable.master", master);
+        if (master == true) {
+            nbt.putLong("cable.amount", energyNetwork.getAmount());
+        } else {
+            nbt.putInt("cable.masterX", masterPos.getX());
+            nbt.putInt("cable.masterY", masterPos.getY());
+            nbt.putInt("cable.masterZ", masterPos.getZ());
+        }
+
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        master = nbt.getBoolean("cable.master");
+        if (master == true) {
+            energyNetwork = new EnergyNetwork(this);
+            energyNetwork.setAmount(nbt.getLong("cable.amount"));
+        } else {
+            masterPos = new BlockPos(nbt.getInt("cable.masterX"), nbt.getInt("cable.masterY"), nbt.getInt("cable.masterZ"));
+        }
+    }
 }
