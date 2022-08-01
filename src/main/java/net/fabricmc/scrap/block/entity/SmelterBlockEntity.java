@@ -71,6 +71,8 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
                         return (int) SmelterBlockEntity.this.energyStorage.amount;
                     case 1:
                         return SmelterBlockEntity.this.progress;
+                    case 2:
+                        return (int) SmelterBlockEntity.this.energyStorage.capacity;
                     default:
                         return 0;
                 }
@@ -90,7 +92,7 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
             }
 
             public int size() {
-                return 2;
+                return 3;
             }
         };
     }

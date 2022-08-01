@@ -12,13 +12,16 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.world.World;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class CrusherScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final World world;
     private final PropertyDelegate propertyDelegate;
 
     public CrusherScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(2),new ArrayPropertyDelegate(2));
+        this(syncId, playerInventory, new SimpleInventory(2),new ArrayPropertyDelegate(3));
     }
 
     public CrusherScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate) {
@@ -42,8 +45,25 @@ public class CrusherScreenHandler extends ScreenHandler {
         return this.inventory.canPlayerUse(player);
     }
 
+    public String getEnergyTooltip() {
+        String tooltip = "";
+        int currentEnergy = this.propertyDelegate.get(0);
+        NumberFormat formatter = new DecimalFormat("0.0");
+        if (currentEnergy > 1000) {
+
+            String current = formatter.format((float) currentEnergy / 1000);
+            String capacity = formatter.format((float) this.propertyDelegate.get(2) / 1000);
+            tooltip += current + "KSU/" + capacity + "KSU";
+        } else {
+
+            tooltip += currentEnergy;
+            String capacity = formatter.format((float) this.propertyDelegate.get(2) / 1000);
+            tooltip += "SU/" + capacity + "KSU";
+        }
+        return tooltip;
+    }
     public int getEnergyProgress() {
-        int i = 16000;
+        int i = this.propertyDelegate.get(2);
         return this.propertyDelegate.get(0) * 50 / i;
     }
 
@@ -79,18 +99,7 @@ public class CrusherScreenHandler extends ScreenHandler {
             }
         }
     }
-    public String getEnergyTooltip(){
-        String tooltip = "";
-        int currentEnergy = this.propertyDelegate.get(0);
-        if (currentEnergy>1000){
-            tooltip+=currentEnergy/1000;
-            tooltip+="KSU/16KSU";
-        }else {
-            tooltip+=currentEnergy;
-            tooltip+="SU/16KSU";
-        }
-        return tooltip;
-    }
+
     private void addPlayerHotbar(PlayerInventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 144));

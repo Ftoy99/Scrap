@@ -51,6 +51,8 @@ public class CrusherBlockEntity extends BlockEntity implements NamedScreenHandle
                         return (int) CrusherBlockEntity.this.energyStorage.amount;
                     case 1:
                         return CrusherBlockEntity.this.progress;
+                    case 2:
+                        return (int) CrusherBlockEntity.this.energyStorage.capacity;
                     default:
                         return 0;
                 }
@@ -70,7 +72,7 @@ public class CrusherBlockEntity extends BlockEntity implements NamedScreenHandle
             }
 
             public int size() {
-                return 2;
+                return 3;
             }
         };
     }

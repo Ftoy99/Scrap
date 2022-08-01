@@ -65,6 +65,8 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
                         return FurnaceGeneratorBlockEntity.this.fuelTime;
                     case 2:
                         return (int) FurnaceGeneratorBlockEntity.this.energyStorage.amount;
+                    case 3:
+                        return (int) FurnaceGeneratorBlockEntity.this.energyStorage.capacity;
                     default:
                         return 0;
                 }
@@ -87,7 +89,7 @@ public class FurnaceGeneratorBlockEntity extends BlockEntity implements NamedScr
             }
 
             public int size() {
-                return 3;
+                return 4;
             }
         };
     }
