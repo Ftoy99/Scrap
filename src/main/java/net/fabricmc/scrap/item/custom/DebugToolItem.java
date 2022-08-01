@@ -1,7 +1,7 @@
 package net.fabricmc.scrap.item.custom;
 
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
-import net.fabricmc.scrap.block.entity.ducts.energyducts.ConductiveEnergyDuctBlockEntity;
+import net.fabricmc.scrap.block.entity.ducts.energyducts.ConductiveEnergyDuctEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
@@ -27,8 +27,8 @@ public class DebugToolItem extends Item {
                 context.getPlayer().sendMessage(Text.of("SU:" + maybeStorage.getAmount() + "/" + maybeStorage.getCapacity()));
             }
             BlockEntity maybeCable = world.getBlockEntity(pos);
-            if (maybeCable!=null && maybeCable.getType()== ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_BLOCK_ENTITY){
-                ConductiveEnergyDuctBlockEntity cable =  (ConductiveEnergyDuctBlockEntity) maybeCable;
+            if (maybeCable!=null && maybeCable.getType()== ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_ENTITY){
+                ConductiveEnergyDuctEntity cable =  (ConductiveEnergyDuctEntity) maybeCable;
                 context.getPlayer().sendMessage(Text.of("Master:"+cable.isMaster()+", Network:"+cable.energyNetwork));
                 System.out.println("Cable:"+cable);
                 System.out.println("Cable Network:"+cable.energyNetwork.cables);

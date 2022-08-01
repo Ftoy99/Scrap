@@ -1,9 +1,7 @@
 package net.fabricmc.scrap.block.custom;
 
-import net.fabricmc.scrap.block.entity.CrusherBlockEntity;
-import net.fabricmc.scrap.block.entity.FurnaceGeneratorBlockEntity;
+import net.fabricmc.scrap.block.entity.CrusherEntity;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
-import net.fabricmc.scrap.block.entity.SmelterBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -44,7 +42,7 @@ public class CrusherBlock extends BlockWithEntity implements BlockEntityProvider
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new CrusherBlockEntity(pos,state);
+        return new CrusherEntity(pos,state);
     }
     @Override
     public BlockRenderType getRenderType(BlockState state) {
@@ -65,8 +63,8 @@ public class CrusherBlock extends BlockWithEntity implements BlockEntityProvider
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof CrusherBlockEntity) {
-                ItemScatterer.spawn(world, pos, (CrusherBlockEntity)blockEntity);
+            if (blockEntity instanceof CrusherEntity) {
+                ItemScatterer.spawn(world, pos, (CrusherEntity)blockEntity);
                 world.updateComparators(pos,this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -76,6 +74,6 @@ public class CrusherBlock extends BlockWithEntity implements BlockEntityProvider
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.CRUSHER_BLOCK_ENTITY, CrusherBlockEntity::tick);
+        return checkType(type, ModBlockEntities.CRUSHER_ENTITY, CrusherEntity::tick);
     }
 }

@@ -14,7 +14,7 @@ import team.reborn.energy.api.base.SimpleEnergyStorage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConductiveEnergyDuctBlockEntity extends BlockEntity {
+public class ConductiveEnergyDuctEntity extends BlockEntity {
     public static int maxExtract = 64;
     public static int maxInsert = 64;
     public int capacity = 512;
@@ -22,15 +22,15 @@ public class ConductiveEnergyDuctBlockEntity extends BlockEntity {
     public BlockPos masterPos;
     public boolean master;
 
-    public ConductiveEnergyDuctBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_BLOCK_ENTITY, pos, state);
+    public ConductiveEnergyDuctEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_ENTITY, pos, state);
         energyNetwork = null;
         master = false;
         masterPos = null;
     }
 
 
-    public static void tick(World world, BlockPos pos, BlockState state, ConductiveEnergyDuctBlockEntity entity) {
+    public static void tick(World world, BlockPos pos, BlockState state, ConductiveEnergyDuctEntity entity) {
         checkNetwork(world, entity);
         if (entity.getEnergyNetwork() != null) {
             List<EnergyStorage> extractFrom = new ArrayList<>();
@@ -72,11 +72,11 @@ public class ConductiveEnergyDuctBlockEntity extends BlockEntity {
 
     }
 
-    private static void checkNetwork(World world, ConductiveEnergyDuctBlockEntity entity) {
+    private static void checkNetwork(World world, ConductiveEnergyDuctEntity entity) {
         if (entity.masterPos != null && entity.energyNetwork == null) {
             BlockEntity maybeCable = world.getBlockEntity(entity.masterPos);
-            if (maybeCable != null && maybeCable.getType() == ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_BLOCK_ENTITY) {
-                ConductiveEnergyDuctBlockEntity cable = (ConductiveEnergyDuctBlockEntity) maybeCable;
+            if (maybeCable != null && maybeCable.getType() == ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_ENTITY) {
+                ConductiveEnergyDuctEntity cable = (ConductiveEnergyDuctEntity) maybeCable;
                 if (cable.getEnergyNetwork() != null) {
                     entity.setEnergyNetwork(cable.getEnergyNetwork());
                 }
@@ -122,9 +122,9 @@ public class ConductiveEnergyDuctBlockEntity extends BlockEntity {
 
     public void initializeNetwork() {
         if (!this.getWorld().isClient) {
-            List<ConductiveEnergyDuctBlockEntity> neighbours = this.getNeighbours();
+            List<ConductiveEnergyDuctEntity> neighbours = this.getNeighbours();
             List<EnergyNetwork> neighbourNets = new ArrayList<>();
-            for (ConductiveEnergyDuctBlockEntity neighbour:neighbours){
+            for (ConductiveEnergyDuctEntity neighbour:neighbours){
                 if(neighbour.getEnergyNetwork()!=null && !neighbourNets.contains(neighbour.getEnergyNetwork())){
                     neighbourNets.add(neighbour.getEnergyNetwork());
                 }
@@ -153,13 +153,13 @@ public class ConductiveEnergyDuctBlockEntity extends BlockEntity {
         }
     }
 
-    public List<ConductiveEnergyDuctBlockEntity> getNeighbours() {
-        List<ConductiveEnergyDuctBlockEntity> neighbours = new ArrayList<>();
+    public List<ConductiveEnergyDuctEntity> getNeighbours() {
+        List<ConductiveEnergyDuctEntity> neighbours = new ArrayList<>();
         if (this.getWorld() != null && !this.getWorld().isClient) {
             for (Direction direction : Direction.values()) {
                 BlockEntity maybeCable = world.getBlockEntity(this.getPos().offset(direction));
                 if (maybeCable != null && maybeCable.getType() == this.getType()) {
-                    neighbours.add((ConductiveEnergyDuctBlockEntity) maybeCable);
+                    neighbours.add((ConductiveEnergyDuctEntity) maybeCable);
                 }
             }
         }

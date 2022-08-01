@@ -1,6 +1,6 @@
 package net.fabricmc.scrap.screens;
 
-import net.fabricmc.scrap.block.entity.FurnaceGeneratorBlockEntity;
+import net.fabricmc.scrap.block.entity.FurnaceGeneratorEntity;
 import net.fabricmc.scrap.screens.slot.FurnaceGeneratorFuelSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -26,7 +26,7 @@ public class FurnaceGeneratorScreenHandler extends ScreenHandler {
     }
 
     public boolean isFuel(ItemStack itemStack) {
-        return FurnaceGeneratorBlockEntity.canUseAsFuel(itemStack);
+        return FurnaceGeneratorEntity.canUseAsFuel(itemStack);
     }
     public FurnaceGeneratorScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate) {
         super(ModScreenHandler.FURNACE_GENERATOR_SCREEN_HANDLER, syncId);

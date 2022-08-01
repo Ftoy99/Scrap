@@ -1,17 +1,14 @@
 package net.fabricmc.scrap.block.entity;
 
-import net.fabricmc.scrap.Main;
 import net.fabricmc.scrap.item.inventory.ImplementedInventory;
 import net.fabricmc.scrap.recipe.OreWasherRecipe;
 import net.fabricmc.scrap.screens.OreWasherScreenHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -27,7 +24,7 @@ import java.util.Optional;
 
 import static net.minecraft.state.property.Properties.WATERLOGGED;
 
-public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
+public class OreWasherEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
 
@@ -35,15 +32,15 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
     private int progress = 0;
     private int maxProgress = 400;
 
-    public OreWasherBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.ORE_WASHER_BLOCK_ENTITY, pos, state);
+    public OreWasherEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.ORE_WASHER_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
                     case 0:
-                        return OreWasherBlockEntity.this.progress;
+                        return OreWasherEntity.this.progress;
                     case 1:
-                        return OreWasherBlockEntity.this.maxProgress;
+                        return OreWasherEntity.this.maxProgress;
                     default:
                         return 0;
                 }
@@ -52,10 +49,10 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
             public void set(int index, int value) {
                 switch (index) {
                     case 0:
-                        OreWasherBlockEntity.this.progress = value;
+                        OreWasherEntity.this.progress = value;
                         break;
                     case 1:
-                        OreWasherBlockEntity.this.maxProgress = value;
+                        OreWasherEntity.this.maxProgress = value;
                         break;
                 }
             }
@@ -97,7 +94,7 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
         return new OreWasherScreenHandler(syncId, inv, this,this.propertyDelegate);
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, OreWasherBlockEntity entity) {
+    public static void tick(World world, BlockPos pos, BlockState state, OreWasherEntity entity) {
         if (state.get(WATERLOGGED)) {
         if (hasRecipe(entity)) {
             entity.progress++;
@@ -110,7 +107,7 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
         }
     }
 
-    private static boolean hasRecipe(OreWasherBlockEntity entity) {
+    private static boolean hasRecipe(OreWasherEntity entity) {
         World world = entity.world;
 
         SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
@@ -126,7 +123,7 @@ public class OreWasherBlockEntity extends BlockEntity implements NamedScreenHand
                 && canInsertAmountIntoByproductSlot(inventory);
     }
 
-    private static void craftItem(OreWasherBlockEntity entity) {
+    private static void craftItem(OreWasherEntity entity) {
         World world = entity.world;
         SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
         for (int i = 0; i < entity.inventory.size(); i++) {

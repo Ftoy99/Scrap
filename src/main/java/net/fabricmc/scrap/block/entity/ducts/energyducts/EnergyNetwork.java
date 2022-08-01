@@ -18,10 +18,10 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
     public long capacity = 0;
     public long maxInsert = Long.MAX_VALUE;
     public long maxExtract = Long.MAX_VALUE;
-    public ArrayList<ConductiveEnergyDuctBlockEntity> cables = new ArrayList<>();
+    public ArrayList<ConductiveEnergyDuctEntity> cables = new ArrayList<>();
     public BlockPos master;
 
-    public EnergyNetwork(ConductiveEnergyDuctBlockEntity cable) {
+    public EnergyNetwork(ConductiveEnergyDuctEntity cable) {
         master = cable.getPos();
         cables.add(cable);
         capacity += cable.getCapacity();
@@ -103,14 +103,14 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
         this.capacity = capacity;
     }
 
-    public void join(ConductiveEnergyDuctBlockEntity cable) {
+    public void join(ConductiveEnergyDuctEntity cable) {
         cables.add(cable);
         capacity += cable.getCapacity();
     }
 
     public void merge(EnergyNetwork netToMerge) {
         System.out.println("Merging");
-        for (ConductiveEnergyDuctBlockEntity cableToMerge : netToMerge.cables) {
+        for (ConductiveEnergyDuctEntity cableToMerge : netToMerge.cables) {
             cableToMerge.setMasterPos(master);
             cableToMerge.setEnergyNetwork(this);
             cableToMerge.setMaster(false);
@@ -120,24 +120,24 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
         amount += netToMerge.getAmount();
     }
 
-    private LinkedList<ConductiveEnergyDuctBlockEntity> findAllNeighbors(ConductiveEnergyDuctBlockEntity firstBlock, World world, BlockPos cable) {
-        LinkedList<ConductiveEnergyDuctBlockEntity> adjacentBlocks = new LinkedList<>();
+    private LinkedList<ConductiveEnergyDuctEntity> findAllNeighbors(ConductiveEnergyDuctEntity firstBlock, World world, BlockPos cable) {
+        LinkedList<ConductiveEnergyDuctEntity> adjacentBlocks = new LinkedList<>();
         adjacentBlocks.add(firstBlock);
         boolean completed = false;
         while (!completed) {
             //For every Block search for entitys
-            LinkedList<ConductiveEnergyDuctBlockEntity> newBlocks = new LinkedList<>();
-            for (ConductiveEnergyDuctBlockEntity block : adjacentBlocks) {
+            LinkedList<ConductiveEnergyDuctEntity> newBlocks = new LinkedList<>();
+            for (ConductiveEnergyDuctEntity block : adjacentBlocks) {
                 for (Direction direction : Direction.values()) {
                     BlockEntity neighbour = world.getBlockEntity(block.getPos().offset(direction));
                     if (neighbour != null && neighbour.getType() == block.getType() && !newBlocks.contains(neighbour) && !neighbour.getPos().equals(cable)) {
-                        newBlocks.add((ConductiveEnergyDuctBlockEntity) neighbour);
+                        newBlocks.add((ConductiveEnergyDuctEntity) neighbour);
                     }
                 }
             }//For each block
             //If new Blocks where found from previous iteration redo else return.
             completed = true;
-            for (ConductiveEnergyDuctBlockEntity block : newBlocks) {
+            for (ConductiveEnergyDuctEntity block : newBlocks) {
                 if (!adjacentBlocks.contains(block)) {
                     adjacentBlocks.add(block);
                     completed = false;
@@ -149,23 +149,23 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
 
     public void split(World world, BlockPos cable) {
         quit(cable);
-        List<ConductiveEnergyDuctBlockEntity> existingCables = cables;
-        List<List<ConductiveEnergyDuctBlockEntity>> networks = new LinkedList<>();
+        List<ConductiveEnergyDuctEntity> existingCables = cables;
+        List<List<ConductiveEnergyDuctEntity>> networks = new LinkedList<>();
         while (!existingCables.isEmpty()) {
-            ConductiveEnergyDuctBlockEntity firstBlock = existingCables.get(0);
-            List<ConductiveEnergyDuctBlockEntity> network = findAllNeighbors(firstBlock, world, cable);
-            for (ConductiveEnergyDuctBlockEntity block : network) {
+            ConductiveEnergyDuctEntity firstBlock = existingCables.get(0);
+            List<ConductiveEnergyDuctEntity> network = findAllNeighbors(firstBlock, world, cable);
+            for (ConductiveEnergyDuctEntity block : network) {
                 existingCables.remove(block);
             }
             networks.add(network);
         }
         if (networks.size() == 1) {
-            List<ConductiveEnergyDuctBlockEntity> net = networks.get(0);
-            ConductiveEnergyDuctBlockEntity master = net.get(0);
+            List<ConductiveEnergyDuctEntity> net = networks.get(0);
+            ConductiveEnergyDuctEntity master = net.get(0);
             System.out.println("Selected master:"+master);
             master.setMaster(true);
             EnergyNetwork newNet = new EnergyNetwork(master);
-            for (ConductiveEnergyDuctBlockEntity netCable : net) {
+            for (ConductiveEnergyDuctEntity netCable : net) {
                 System.out.println("Setting master");
                 netCable.setEnergyNetwork(newNet);
                 netCable.setMasterPos(master.getPos());
@@ -176,10 +176,10 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
                 newNet.amount = (newNet.cables.size() / cables.size()) * amount;
             }
         } else if (networks.size() > 1) {
-            for (List<ConductiveEnergyDuctBlockEntity> net : networks) {
+            for (List<ConductiveEnergyDuctEntity> net : networks) {
                 EnergyNetwork newNet = new EnergyNetwork(net.get(0));
                 net.get(0).setMaster(true);
-                for (ConductiveEnergyDuctBlockEntity netCable : net) {
+                for (ConductiveEnergyDuctEntity netCable : net) {
                     netCable.setEnergyNetwork(newNet);
                     netCable.setMasterPos(net.get(0).getPos());
                     newNet.join(netCable);
@@ -193,8 +193,8 @@ public class EnergyNetwork extends SnapshotParticipant<Long> implements EnergySt
     }
 
     public void quit(BlockPos cable) {
-        ConductiveEnergyDuctBlockEntity cableToRemove = null;
-        for (ConductiveEnergyDuctBlockEntity maybeCableToRemove : cables) {
+        ConductiveEnergyDuctEntity cableToRemove = null;
+        for (ConductiveEnergyDuctEntity maybeCableToRemove : cables) {
             if (maybeCableToRemove.getPos().equals(cable)) {
                 cableToRemove = maybeCableToRemove;
             }

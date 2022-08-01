@@ -1,6 +1,5 @@
 package net.fabricmc.scrap.screens;
 
-import net.fabricmc.scrap.block.entity.SmelterBlockEntity;
 import net.fabricmc.scrap.screens.slot.ScrapOutputSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.FurnaceOutputSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.world.World;
 

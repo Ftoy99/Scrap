@@ -1,14 +1,12 @@
 package net.fabricmc.scrap.block.custom;
 
-import net.fabricmc.scrap.Main;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
-import net.fabricmc.scrap.block.entity.OreWasherBlockEntity;
+import net.fabricmc.scrap.block.entity.OreWasherEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
@@ -69,7 +67,7 @@ public class OreWasherBlock extends BlockWithEntity implements BlockEntityProvid
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new OreWasherBlockEntity(pos,state);
+        return new OreWasherEntity(pos,state);
     }
 
     @Override
@@ -93,8 +91,8 @@ public class OreWasherBlock extends BlockWithEntity implements BlockEntityProvid
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof OreWasherBlockEntity) {
-                ItemScatterer.spawn(world, pos, (OreWasherBlockEntity)blockEntity);
+            if (blockEntity instanceof OreWasherEntity) {
+                ItemScatterer.spawn(world, pos, (OreWasherEntity)blockEntity);
                 world.updateComparators(pos,this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -104,7 +102,7 @@ public class OreWasherBlock extends BlockWithEntity implements BlockEntityProvid
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.ORE_WASHER_BLOCK_ENTITY, OreWasherBlockEntity::tick);
+        return checkType(type, ModBlockEntities.ORE_WASHER_ENTITY, OreWasherEntity::tick);
     }
 
 

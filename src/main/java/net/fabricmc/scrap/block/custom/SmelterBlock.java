@@ -1,8 +1,7 @@
 package net.fabricmc.scrap.block.custom;
 
-import net.fabricmc.scrap.block.entity.FurnaceGeneratorBlockEntity;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
-import net.fabricmc.scrap.block.entity.SmelterBlockEntity;
+import net.fabricmc.scrap.block.entity.SmelterEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -41,7 +40,7 @@ public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new SmelterBlockEntity(pos,state);
+        return new SmelterEntity(pos,state);
     }
     @Override
     public BlockRenderType getRenderType(BlockState state) {
@@ -62,8 +61,8 @@ public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof SmelterBlockEntity) {
-                ItemScatterer.spawn(world, pos, (SmelterBlockEntity)blockEntity);
+            if (blockEntity instanceof SmelterEntity) {
+                ItemScatterer.spawn(world, pos, (SmelterEntity)blockEntity);
                 world.updateComparators(pos,this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -73,6 +72,6 @@ public class SmelterBlock extends BlockWithEntity implements BlockEntityProvider
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.SMELTER_BLOCK_ENTITY, SmelterBlockEntity::tick);
+        return checkType(type, ModBlockEntities.SMELTER_ENTITY, SmelterEntity::tick);
     }
 }

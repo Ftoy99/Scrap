@@ -1,8 +1,7 @@
 package net.fabricmc.scrap.block.custom;
 
-import net.fabricmc.scrap.block.entity.AlloySmelterBlockEntity;
+import net.fabricmc.scrap.block.entity.AlloySmelterEntity;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
-import net.fabricmc.scrap.block.entity.SmelterBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -41,7 +40,7 @@ public class AlloySmelterBlock extends BlockWithEntity implements BlockEntityPro
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new AlloySmelterBlockEntity(pos,state);
+        return new AlloySmelterEntity(pos,state);
     }
     @Override
     public BlockRenderType getRenderType(BlockState state) {
@@ -63,8 +62,8 @@ public class AlloySmelterBlock extends BlockWithEntity implements BlockEntityPro
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof AlloySmelterBlockEntity) {
-                ItemScatterer.spawn(world, pos, (AlloySmelterBlockEntity)blockEntity);
+            if (blockEntity instanceof AlloySmelterEntity) {
+                ItemScatterer.spawn(world, pos, (AlloySmelterEntity)blockEntity);
                 world.updateComparators(pos,this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -74,6 +73,6 @@ public class AlloySmelterBlock extends BlockWithEntity implements BlockEntityPro
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.ALLOY_SMELTER_BLOCK_ENTITY, AlloySmelterBlockEntity::tick);
+        return checkType(type, ModBlockEntities.ALLOY_SMELTER_ENTITY, AlloySmelterEntity::tick);
     }
 }

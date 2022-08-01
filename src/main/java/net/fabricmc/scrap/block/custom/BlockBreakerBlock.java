@@ -1,6 +1,6 @@
 package net.fabricmc.scrap.block.custom;
 
-import net.fabricmc.scrap.block.entity.FurnaceGeneratorEntity;
+import net.fabricmc.scrap.block.entity.BlockBreakerEntity;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -20,9 +20,11 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class FurnaceGeneratorBlock extends BlockWithEntity implements BlockEntityProvider {
+public class BlockBreakerBlock extends BlockWithEntity implements BlockEntityProvider {
+
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
-    public FurnaceGeneratorBlock(Settings settings) {
+
+    public BlockBreakerBlock(Settings settings) {
         super(settings);
         this.setDefaultState((BlockState)((BlockState)((this.stateManager.getDefaultState()).with(FACING, Direction.NORTH))));
     }
@@ -40,9 +42,7 @@ public class FurnaceGeneratorBlock extends BlockWithEntity implements BlockEntit
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-
-        return new FurnaceGeneratorEntity(pos,state);
-
+        return new BlockBreakerEntity(pos,state);
     }
     @Override
     public BlockRenderType getRenderType(BlockState state) {
@@ -56,7 +56,6 @@ public class FurnaceGeneratorBlock extends BlockWithEntity implements BlockEntit
             if (screenHandlerFactory!=null){
                 player.openHandledScreen(screenHandlerFactory);
             }
-
         }
         return ActionResult.SUCCESS;
     }
@@ -64,8 +63,8 @@ public class FurnaceGeneratorBlock extends BlockWithEntity implements BlockEntit
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof FurnaceGeneratorEntity) {
-                ItemScatterer.spawn(world, pos, (FurnaceGeneratorEntity)blockEntity);
+            if (blockEntity instanceof BlockBreakerEntity) {
+                ItemScatterer.spawn(world, pos, (BlockBreakerEntity)blockEntity);
                 world.updateComparators(pos,this);
             }
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -75,6 +74,6 @@ public class FurnaceGeneratorBlock extends BlockWithEntity implements BlockEntit
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.FURNACE_GENERATOR_ENTITY, FurnaceGeneratorEntity::tick);
+        return checkType(type, ModBlockEntities.BLOCK_BREAKER_ENTITY, BlockBreakerEntity::tick);
     }
 }

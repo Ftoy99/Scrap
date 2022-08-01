@@ -23,7 +23,7 @@ import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.Optional;
 
-public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
+public class AlloySmelterEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(16000, 16000, 0) {
         @Override
@@ -37,21 +37,21 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
     private int cost;
     private int maxProgress;
 
-    public AlloySmelterBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.ALLOY_SMELTER_BLOCK_ENTITY, pos, state);
+    public AlloySmelterEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.ALLOY_SMELTER_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
                     case 0:
-                        return (int) AlloySmelterBlockEntity.this.energyStorage.amount;
+                        return (int) AlloySmelterEntity.this.energyStorage.amount;
                     case 1:
-                        return (int) AlloySmelterBlockEntity.this.energyStorage.capacity;
+                        return (int) AlloySmelterEntity.this.energyStorage.capacity;
                     case 2:
-                        return AlloySmelterBlockEntity.this.progress;
+                        return AlloySmelterEntity.this.progress;
                     case 3:
-                        return AlloySmelterBlockEntity.this.cost;
+                        return AlloySmelterEntity.this.cost;
                     case 4:
-                        return AlloySmelterBlockEntity.this.maxProgress;
+                        return AlloySmelterEntity.this.maxProgress;
                     default:
                         return 0;
                 }
@@ -60,16 +60,16 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
             public void set(int index, int value) {
                 switch (index) {
                     case 0:
-                        AlloySmelterBlockEntity.this.energyStorage.amount = value;
+                        AlloySmelterEntity.this.energyStorage.amount = value;
                         break;
                     case 2:
-                        AlloySmelterBlockEntity.this.progress = value;
+                        AlloySmelterEntity.this.progress = value;
                         break;
                     case 3:
-                        AlloySmelterBlockEntity.this.cost = value;
+                        AlloySmelterEntity.this.cost = value;
                         break;
                     case 4:
-                        AlloySmelterBlockEntity.this.maxProgress = value;
+                        AlloySmelterEntity.this.maxProgress = value;
                         break;
                     default:
                         break;
@@ -85,7 +85,7 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
 
 
 
-    public static void tick(World world, BlockPos pos, BlockState state, AlloySmelterBlockEntity entity) {
+    public static void tick(World world, BlockPos pos, BlockState state, AlloySmelterEntity entity) {
             if (hasRecipe(entity)) {
                 AlloyingRecipes recipe = getRecipe(entity);
                 entity.maxProgress = recipe.getTime();
@@ -102,7 +102,7 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
             }
 
     }
-    private static void craftItem(AlloySmelterBlockEntity entity) {
+    private static void craftItem(AlloySmelterEntity entity) {
         World world = entity.getWorld();
         SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
         for (int i = 0; i < entity.inventory.size(); i++) {
@@ -131,7 +131,7 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
         this.cost = 0;
     }
 
-    private static boolean hasRecipe(AlloySmelterBlockEntity entity) {
+    private static boolean hasRecipe(AlloySmelterEntity entity) {
         World world = entity.getWorld();
         SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
         for (int i = 0; i < entity.inventory.size(); i++) {
@@ -143,7 +143,7 @@ public class AlloySmelterBlockEntity extends BlockEntity implements NamedScreenH
                 && canInsertItemIntoOutputSlot(inventory, match.get().getOutput());
     }
 
-    private static AlloyingRecipes getRecipe(AlloySmelterBlockEntity entity){
+    private static AlloyingRecipes getRecipe(AlloySmelterEntity entity){
         World world = entity.getWorld();
         SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
         for (int i = 0; i < entity.inventory.size(); i++) {

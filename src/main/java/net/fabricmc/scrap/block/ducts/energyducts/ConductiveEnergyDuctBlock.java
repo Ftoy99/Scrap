@@ -1,7 +1,7 @@
 package net.fabricmc.scrap.block.ducts.energyducts;
 
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
-import net.fabricmc.scrap.block.entity.ducts.energyducts.ConductiveEnergyDuctBlockEntity;
+import net.fabricmc.scrap.block.entity.ducts.energyducts.ConductiveEnergyDuctEntity;
 import net.fabricmc.scrap.block.entity.ducts.energyducts.EnergyNetwork;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -14,7 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class ConductiveEnergyDuctBlock extends EnergyDuct {
     public ConductiveEnergyDuctBlock(float radius, Settings settings) {
@@ -24,7 +23,7 @@ public class ConductiveEnergyDuctBlock extends EnergyDuct {
     @Nullable
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new ConductiveEnergyDuctBlockEntity(pos,state);
+        return new ConductiveEnergyDuctEntity(pos,state);
     }
 
     @Override
@@ -33,8 +32,8 @@ public class ConductiveEnergyDuctBlock extends EnergyDuct {
         if (!world.isClient()){
             BlockEntity maybeCable = world.getBlockEntity(pos);
             if (maybeCable != null) {
-                if (maybeCable instanceof  ConductiveEnergyDuctBlockEntity){
-                    ConductiveEnergyDuctBlockEntity cable = (ConductiveEnergyDuctBlockEntity) maybeCable;
+                if (maybeCable instanceof ConductiveEnergyDuctEntity){
+                    ConductiveEnergyDuctEntity cable = (ConductiveEnergyDuctEntity) maybeCable;
                     cable.initializeNetwork();
                 }
             }
@@ -47,8 +46,8 @@ public class ConductiveEnergyDuctBlock extends EnergyDuct {
         if (!world.isClient()){
             BlockEntity maybeCable = world.getBlockEntity(pos);
             if (maybeCable != null) {
-                if (maybeCable instanceof  ConductiveEnergyDuctBlockEntity){
-                    ConductiveEnergyDuctBlockEntity cable = (ConductiveEnergyDuctBlockEntity) maybeCable;
+                if (maybeCable instanceof ConductiveEnergyDuctEntity){
+                    ConductiveEnergyDuctEntity cable = (ConductiveEnergyDuctEntity) maybeCable;
                     EnergyNetwork  net = cable.getEnergyNetwork();
                     net.quit(cable.getPos());
                     net.split(world,pos);
@@ -62,6 +61,6 @@ public class ConductiveEnergyDuctBlock extends EnergyDuct {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_BLOCK_ENTITY, ConductiveEnergyDuctBlockEntity::tick);
+        return checkType(type, ModBlockEntities.CONDUCTIVE_ENERGY_DUCT_ENTITY, ConductiveEnergyDuctEntity::tick);
     }
 }

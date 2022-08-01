@@ -1,54 +1,29 @@
 package net.fabricmc.scrap.block.entity;
 
-import com.google.common.collect.Maps;
-import net.fabricmc.scrap.Main;
 import net.fabricmc.scrap.item.inventory.ImplementedInventory;
-import net.fabricmc.scrap.recipe.OreWasherRecipe;
-import net.fabricmc.scrap.screens.FurnaceGeneratorScreenHandler;
-import net.fabricmc.scrap.screens.SmelterScreenHandler;
-import net.minecraft.SharedConstants;
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.Block;
+import net.fabricmc.scrap.recipe.CrushingRecipes;
+import net.fabricmc.scrap.screens.CrusherScreenHandler;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.SmeltingRecipe;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.tag.ItemTags;
-import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
-import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 
-import static net.minecraft.state.property.Properties.WATERLOGGED;
-
-public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
+public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(16000, 16000, 0) {
         @Override
@@ -56,23 +31,28 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
             markDirty();
         }
     };
+
     protected final PropertyDelegate propertyDelegate;
+
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
+
     int progress;
+
     private int cost=8;
+
     private int maxProgress=200;
 
-    public SmelterBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.SMELTER_BLOCK_ENTITY, pos, state);
+    public BlockBreakerEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.CRUSHER_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
                     case 0:
-                        return (int) SmelterBlockEntity.this.energyStorage.amount;
+                        return (int) BlockBreakerEntity.this.energyStorage.amount;
                     case 1:
-                        return SmelterBlockEntity.this.progress;
+                        return BlockBreakerEntity.this.progress;
                     case 2:
-                        return (int) SmelterBlockEntity.this.energyStorage.capacity;
+                        return (int) BlockBreakerEntity.this.energyStorage.capacity;
                     default:
                         return 0;
                 }
@@ -81,10 +61,10 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
             public void set(int index, int value) {
                 switch (index) {
                     case 0:
-                        SmelterBlockEntity.this.energyStorage.amount = value;
+                        BlockBreakerEntity.this.energyStorage.amount = value;
                         break;
                     case 1:
-                        SmelterBlockEntity.this.progress = value;
+                        BlockBreakerEntity.this.progress = value;
                         break;
                     default:
                         break;
@@ -100,7 +80,7 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
 
 
 
-    public static void tick(World world, BlockPos pos, BlockState state, SmelterBlockEntity entity) {
+    public static void tick(World world, BlockPos pos, BlockState state, BlockBreakerEntity entity) {
             if (hasRecipe(entity)) {
                 if (entity.energyStorage.amount>entity.cost) {
                     entity.progress++;
@@ -114,14 +94,14 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
             }
 
     }
-    private static void craftItem(SmelterBlockEntity entity) {
+    private static void craftItem(BlockBreakerEntity entity) {
         World world = entity.getWorld();
         SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
         for (int i = 0; i < entity.inventory.size(); i++) {
             inventory.setStack(i, entity.getStack(i));
         }
-        Optional<SmeltingRecipe> match = world.getRecipeManager()
-                .getFirstMatch(RecipeType.SMELTING, inventory, world);
+        Optional<CrushingRecipes> match = world.getRecipeManager()
+                .getFirstMatch(CrushingRecipes.Type.INSTANCE, inventory, world);
 
         if (match.isPresent()) {
             entity.removeStack(0, 1);
@@ -133,23 +113,26 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
     private void resetProgress() {
         this.progress = 0;
     }
-    private static boolean hasRecipe(SmelterBlockEntity entity) {
+
+    private static boolean hasRecipe(BlockBreakerEntity entity) {
         World world = entity.getWorld();
         SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
         for (int i = 0; i < entity.inventory.size(); i++) {
             inventory.setStack(i, entity.getStack(i));
         }
-        Optional<SmeltingRecipe> match = world.getRecipeManager()
-                .getFirstMatch(RecipeType.SMELTING, inventory, world);
+        Optional<CrushingRecipes> match = world.getRecipeManager()
+                .getFirstMatch(CrushingRecipes.Type.INSTANCE, inventory, world);
         return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
                 && canInsertItemIntoOutputSlot(inventory, match.get().getOutput());
     }
     private boolean isFull() {
         return this.energyStorage.amount >= this.energyStorage.capacity;
     }
+
     private static boolean canInsertItemIntoOutputSlot(SimpleInventory inventory, ItemStack output) {
         return inventory.getStack(1).getItem() == output.getItem() || inventory.getStack(1).isEmpty();
     }
+
     private static boolean canInsertAmountIntoOutputSlot(SimpleInventory inventory) {
         return inventory.getStack(1).getMaxCount() > inventory.getStack(1).getCount();
     }
@@ -178,13 +161,13 @@ public class SmelterBlockEntity extends BlockEntity implements NamedScreenHandle
 
     @Override
     public Text getDisplayName() {
-        return Text.literal("Smelter");
+        return Text.literal("Crusher");
     }
 
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new SmelterScreenHandler(syncId, inv, this, this.propertyDelegate);
+        return new CrusherScreenHandler(syncId, inv, this, this.propertyDelegate);
     }
 
 }
