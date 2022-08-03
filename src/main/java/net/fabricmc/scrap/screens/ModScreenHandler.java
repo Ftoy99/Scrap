@@ -26,4 +26,8 @@ public class ModScreenHandler {
     public static ScreenHandlerType<AlloySmelterScreenHandler> ALLOY_SMELTER_SCREEN_HANDLER =
             ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "alloy_smelter"),
                     AlloySmelterScreenHandler::new);
+
+    public static ScreenHandlerType<BlockBreakerScreenHandler> BLOCK_BREAKER_SCREEN_HANDLER =
+            ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "block_breaker"),
+                    BlockBreakerScreenHandler::new);
 }

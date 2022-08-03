@@ -1,14 +1,14 @@
 package net.fabricmc.scrap.block.entity;
 
 import net.fabricmc.scrap.item.inventory.ImplementedInventory;
-import net.fabricmc.scrap.recipe.CrushingRecipes;
-import net.fabricmc.scrap.screens.CrusherScreenHandler;
+import net.fabricmc.scrap.screens.BlockBreakerScreenHandler;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -17,11 +17,10 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
-
-import java.util.Optional;
 
 public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
@@ -31,27 +30,19 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
             markDirty();
         }
     };
-
     protected final PropertyDelegate propertyDelegate;
 
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
-
-    int progress;
-
-    private int cost=8;
-
-    private int maxProgress=200;
+    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
+    private final int breakCost = 100;
 
     public BlockBreakerEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.CRUSHER_ENTITY, pos, state);
+        super(ModBlockEntities.BLOCK_BREAKER_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
                     case 0:
                         return (int) BlockBreakerEntity.this.energyStorage.amount;
                     case 1:
-                        return BlockBreakerEntity.this.progress;
-                    case 2:
                         return (int) BlockBreakerEntity.this.energyStorage.capacity;
                     default:
                         return 0;
@@ -63,86 +54,64 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
                     case 0:
                         BlockBreakerEntity.this.energyStorage.amount = value;
                         break;
-                    case 1:
-                        BlockBreakerEntity.this.progress = value;
-                        break;
                     default:
                         break;
                 }
             }
 
             public int size() {
-                return 3;
+                return 2;
             }
         };
     }
 
 
-
-
     public static void tick(World world, BlockPos pos, BlockState state, BlockBreakerEntity entity) {
-            if (hasRecipe(entity)) {
-                if (entity.energyStorage.amount>entity.cost) {
-                    entity.progress++;
-                    entity.energyStorage.amount -= entity.cost;
-                    if (entity.progress > entity.maxProgress) {
-                        craftItem(entity);
+        if (!world.isClient()) {
+            Direction direction = state.get(HorizontalFacingBlock.FACING).getOpposite();
+            BlockPos blockToBreakPos = pos.offset(direction);
+            Item item = world.getBlockState(blockToBreakPos).getBlock().asItem();
+            ItemStack itemStack = new ItemStack(item);
+            if (canFit(entity, itemStack)) {
+                if (entity.energyStorage.getAmount()>entity.breakCost){
+                    entity.energyStorage.amount-=entity.breakCost;
+                    world.removeBlock(blockToBreakPos, false);
+                    for (int i = 0; i < entity.inventory.size(); i++) {
+                        if (entity.getStack(i).getItem() == itemStack.getItem() && entity.getStack(i).getCount() < entity.getStack(i).getMaxCount()) {
+                            entity.setStack(i, new ItemStack(item, entity.getStack(i).getCount() + 1));
+                            return;
+                        }
+                        if (entity.getStack(i) == ItemStack.EMPTY) {
+                            entity.setStack(i, new ItemStack(item, 1));
+                            return;
+                        }
                     }
                 }
+
             } else {
-                entity.resetProgress();
+                return;
             }
-
+        }
     }
-    private static void craftItem(BlockBreakerEntity entity) {
-        World world = entity.getWorld();
-        SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
+
+    private static boolean canFit(BlockBreakerEntity entity, ItemStack itemStack) {
         for (int i = 0; i < entity.inventory.size(); i++) {
-            inventory.setStack(i, entity.getStack(i));
+            if (entity.getStack(i).getItem() == itemStack.getItem() && entity.getStack(i).getCount() < entity.getStack(i).getMaxCount()) {
+                return true;
+            }
+            if (entity.getStack(i) == ItemStack.EMPTY) {
+                return true;
+            }
         }
-        Optional<CrushingRecipes> match = world.getRecipeManager()
-                .getFirstMatch(CrushingRecipes.Type.INSTANCE, inventory, world);
-
-        if (match.isPresent()) {
-            entity.removeStack(0, 1);
-            entity.setStack(1, new ItemStack(match.get().getOutput().getItem(),
-                    entity.getStack(1).getCount() + 1));
-            entity.resetProgress();
-        }
-    }
-    private void resetProgress() {
-        this.progress = 0;
+        return false;
     }
 
-    private static boolean hasRecipe(BlockBreakerEntity entity) {
-        World world = entity.getWorld();
-        SimpleInventory inventory = new SimpleInventory(entity.inventory.size());
-        for (int i = 0; i < entity.inventory.size(); i++) {
-            inventory.setStack(i, entity.getStack(i));
-        }
-        Optional<CrushingRecipes> match = world.getRecipeManager()
-                .getFirstMatch(CrushingRecipes.Type.INSTANCE, inventory, world);
-        return match.isPresent() && canInsertAmountIntoOutputSlot(inventory)
-                && canInsertItemIntoOutputSlot(inventory, match.get().getOutput());
-    }
-    private boolean isFull() {
-        return this.energyStorage.amount >= this.energyStorage.capacity;
-    }
-
-    private static boolean canInsertItemIntoOutputSlot(SimpleInventory inventory, ItemStack output) {
-        return inventory.getStack(1).getItem() == output.getItem() || inventory.getStack(1).isEmpty();
-    }
-
-    private static boolean canInsertAmountIntoOutputSlot(SimpleInventory inventory) {
-        return inventory.getStack(1).getMaxCount() > inventory.getStack(1).getCount();
-    }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        progress = nbt.getInt("furnacegenerator.progress");
-        energyStorage.amount = nbt.getInt("furnacegenerator.amount");
+        energyStorage.amount = nbt.getInt("blockbreaker.amount");
 
     }
 
@@ -150,8 +119,7 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
     public void writeNbt(NbtCompound nbt) {
         Inventories.writeNbt(nbt, inventory);
         super.writeNbt(nbt);
-        nbt.putInt("furnacegenerator.burnTime", progress);
-        nbt.putInt("furnacegenerator.amount", (int) energyStorage.amount);
+        nbt.putInt("blockbreaker.amount", (int) energyStorage.amount);
     }
 
     @Override
@@ -161,13 +129,13 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
 
     @Override
     public Text getDisplayName() {
-        return Text.literal("Crusher");
+        return Text.literal("Block Breaker");
     }
 
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new CrusherScreenHandler(syncId, inv, this, this.propertyDelegate);
+        return new BlockBreakerScreenHandler(syncId, inv, this, this.propertyDelegate);
     }
 
 }
