@@ -1,14 +1,15 @@
 package net.fabricmc.scrap.block.entity;
 
 import net.fabricmc.scrap.item.inventory.ImplementedInventory;
-import net.fabricmc.scrap.screens.BlockBreakerScreenHandler;
+import net.fabricmc.scrap.screens.BlockPlacerScreenHandler;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.item.Item;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -22,7 +23,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
-public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
+public class BlockPlacerEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
 
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(16000, 16000, 0) {
         @Override
@@ -33,17 +34,17 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
     protected final PropertyDelegate propertyDelegate;
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
-    private final int breakCost = 100;
+    private final int placeCost = 100;
 
-    public BlockBreakerEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.BLOCK_BREAKER_ENTITY, pos, state);
+    public BlockPlacerEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.BLOCK_PLACER_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
                     case 0:
-                        return (int) BlockBreakerEntity.this.energyStorage.amount;
+                        return (int) BlockPlacerEntity.this.energyStorage.amount;
                     case 1:
-                        return (int) BlockBreakerEntity.this.energyStorage.capacity;
+                        return (int) BlockPlacerEntity.this.energyStorage.capacity;
                     default:
                         return 0;
                 }
@@ -52,7 +53,7 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
             public void set(int index, int value) {
                 switch (index) {
                     case 0:
-                        BlockBreakerEntity.this.energyStorage.amount = value;
+                        BlockPlacerEntity.this.energyStorage.amount = value;
                         break;
                     default:
                         break;
@@ -66,44 +67,29 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
     }
 
 
-    public static void tick(World world, BlockPos pos, BlockState state, BlockBreakerEntity entity) {
+    public static void tick(World world, BlockPos pos, BlockState state, BlockPlacerEntity entity) {
         if (!world.isClient()) {
             Direction direction = state.get(HorizontalFacingBlock.FACING).getOpposite();
-            BlockPos blockToBreakPos = pos.offset(direction);
-            Item item = world.getBlockState(blockToBreakPos).getBlock().asItem();
-            ItemStack itemStack = new ItemStack(item);
-            if (world.getBlockState(blockToBreakPos).isSolidBlock(world, blockToBreakPos)) {
-                if (canFit(entity, itemStack)) {
-                    if (entity.energyStorage.getAmount() > entity.breakCost) {
-                        entity.energyStorage.amount -= entity.breakCost;
-                        world.removeBlock(blockToBreakPos, false);
-                        for (int i = 0; i < entity.inventory.size(); i++) {
-                            if (entity.getStack(i).getItem() == itemStack.getItem() && entity.getStack(i).getCount() < entity.getStack(i).getMaxCount()) {
-                                entity.setStack(i, new ItemStack(item, entity.getStack(i).getCount() + 1));
-                                return;
+            BlockPos blockToPlacePos = pos.offset(direction);
+            if (entity.energyStorage.amount >= entity.placeCost) {
+                if (world.getBlockState(blockToPlacePos).getBlock() == Blocks.AIR) {
+                    //place block
+                    System.out.println("Check Block in inv");
+                    for (int i = 0; i < entity.inventory.size(); i++) {
+                        if (entity.getStack(i)!=ItemStack.EMPTY && entity.getStack(i).getItem() instanceof BlockItem) {
+                            System.out.println("Placing BLock");
+                            if(world.setBlockState(blockToPlacePos,((BlockItem)entity.getStack(i).getItem()).getBlock().getDefaultState())){
+                                entity.getStack(i).setCount(entity.getStack(i).getCount()-1);
+                                entity.energyStorage.amount -= entity.placeCost;
+
                             }
-                            if (entity.getStack(i) == ItemStack.EMPTY) {
-                                entity.setStack(i, new ItemStack(item, 1));
-                                return;
-                            }
+                            return;
                         }
                     }
                 }
             }
-            return;
-        }
-    }
 
-    private static boolean canFit(BlockBreakerEntity entity, ItemStack itemStack) {
-        for (int i = 0; i < entity.inventory.size(); i++) {
-            if (entity.getStack(i).getItem() == itemStack.getItem() && entity.getStack(i).getCount() < entity.getStack(i).getMaxCount()) {
-                return true;
-            }
-            if (entity.getStack(i) == ItemStack.EMPTY) {
-                return true;
-            }
         }
-        return false;
     }
 
 
@@ -111,7 +97,7 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, inventory);
-        energyStorage.amount = nbt.getInt("blockbreaker.amount");
+        energyStorage.amount = nbt.getInt("blockplacer.amount");
 
     }
 
@@ -119,7 +105,7 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
     public void writeNbt(NbtCompound nbt) {
         Inventories.writeNbt(nbt, inventory);
         super.writeNbt(nbt);
-        nbt.putInt("blockbreaker.amount", (int) energyStorage.amount);
+        nbt.putInt("blockplacer.amount", (int) energyStorage.amount);
     }
 
     @Override
@@ -129,13 +115,13 @@ public class BlockBreakerEntity extends BlockEntity implements NamedScreenHandle
 
     @Override
     public Text getDisplayName() {
-        return Text.literal("Block Breaker");
+        return Text.literal("Block Placer");
     }
 
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        return new BlockBreakerScreenHandler(syncId, inv, this, this.propertyDelegate);
+        return new BlockPlacerScreenHandler(syncId, inv, this, this.propertyDelegate);
     }
 
 }

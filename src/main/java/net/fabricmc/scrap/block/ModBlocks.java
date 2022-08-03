@@ -34,6 +34,8 @@ public class ModBlocks{
 
     public static final Block BLOCK_BREAKER_BLOCK = registerBlock("block_breaker_block",new BlockBreakerBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
+    public static final Block BLOCK_PLACER_BLOCK = registerBlock("block_placer_block",new BlockPlacerBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
     public static final Block ALLOY_SMELTER_BLOCK = registerBlock("alloy_smelter_block",new AlloySmelterBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
     public static final Block CONDUCTIVE_ENERGY_DUCT_BLOCK = registerBlock("conductive_energy_duct_block",new ConductiveEnergyDuctBlock(0.2500f,FabricBlockSettings.of(Material.GLASS).strength(2.0F, 2.0F)), ModItemGroup.SCRAP);

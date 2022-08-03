@@ -30,4 +30,8 @@ public class ModScreenHandler {
     public static ScreenHandlerType<BlockBreakerScreenHandler> BLOCK_BREAKER_SCREEN_HANDLER =
             ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "block_breaker"),
                     BlockBreakerScreenHandler::new);
+
+    public static ScreenHandlerType<BlockPlacerScreenHandler> BLOCK_PLACER_SCREEN_HANDLER =
+            ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "block_placer"),
+                    BlockPlacerScreenHandler::new);
 }

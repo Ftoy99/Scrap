@@ -24,6 +24,7 @@
   "block.scrap.smelter_block": "Smelter",
   "block.scrap.crusher_block": "Crusher",
   "block.scrap.block_breaker_block": "Block Breaker",
+  "block.scrap.block_placer_block": "Block Placer",
   "block.scrap.alloy_smelter_block": "Alloy Smelter",
   "block.scrap.creative_energy_cell_block": "Creative Energy Cell",
 

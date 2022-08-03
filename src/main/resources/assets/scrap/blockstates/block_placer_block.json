@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "scrap:block/block_placer_block",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "scrap:block/block_placer_block",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "scrap:block/block_placer_block"
+    },
+    "facing=west": {
+      "model": "scrap:block/block_placer_block",
+      "y": 90
+    }
+  }
+}
