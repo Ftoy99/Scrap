@@ -3,6 +3,7 @@ package net.fabricmc.scrap.item;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.scrap.Main;
 import net.fabricmc.scrap.item.custom.DebugToolItem;
+import net.fabricmc.scrap.item.custom.PouchItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -21,6 +22,7 @@ public class ModItems {
     public static final Item COAL_DUST =registerItem("coal_dust",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static final Item LAPIS_LAZULI_DUST =registerItem("lapis_lazuli_dust",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static final Item ENDER_DUST =registerItem("ender_dust",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
+    public static final Item POUCH =registerItem("pouch",new PouchItem(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(1)));
 
 
 

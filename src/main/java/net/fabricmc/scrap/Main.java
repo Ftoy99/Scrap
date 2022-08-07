@@ -6,6 +6,7 @@ import net.fabricmc.scrap.block.ModBlocks;
 import net.fabricmc.scrap.block.entity.ModBlockEntities;
 import net.fabricmc.scrap.item.ModItems;
 import net.fabricmc.scrap.recipe.ModRecipes;
+import net.fabricmc.scrap.screens.ModScreens;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,5 +20,6 @@ public class Main implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		ModBlockEntities.registerBlockEntities();
 		ModRecipes.registerModRecipes();
+		ModScreens.registerModScreens();
 	}
 }

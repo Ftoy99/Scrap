@@ -6,6 +6,8 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.scrap.screens.*;
 import net.fabricmc.scrap.util.ModRenderHelper;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 
 @Environment(EnvType.CLIENT)
 public class ScrapClient implements ClientModInitializer {

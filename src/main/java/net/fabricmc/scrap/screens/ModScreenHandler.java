@@ -2,10 +2,11 @@ package net.fabricmc.scrap.screens;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.scrap.Main;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.screen.FurnaceScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
-
+import net.minecraft.util.registry.Registry;
 public class ModScreenHandler {
     public static ScreenHandlerType<OreWasherScreenHandler> ORE_WASHER_SCREEN_HANDLER =
             ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "ore_washer"),
@@ -33,5 +34,4 @@ public class ModScreenHandler {
 
     public static ScreenHandlerType<BlockPlacerScreenHandler> BLOCK_PLACER_SCREEN_HANDLER =
             ScreenHandlerRegistry.registerSimple(new Identifier(Main.MOD_ID, "block_placer"),
-                    BlockPlacerScreenHandler::new);
-}
+                    BlockPlacerScreenHandler::new);}
