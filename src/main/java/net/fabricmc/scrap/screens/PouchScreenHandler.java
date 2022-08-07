@@ -38,7 +38,7 @@ public class PouchScreenHandler extends GenericContainerScreenHandler {
     }
 
     public PouchScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
-        this(ModScreens.POUCH_SCREEN_HANDLER, syncId, playerInventory, inventory);
+        this(ModScreenHandlers.POUCH_SCREEN_HANDLER, syncId, playerInventory, inventory);
     }
 
     public PouchScreenHandler(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, Inventory inventory) {

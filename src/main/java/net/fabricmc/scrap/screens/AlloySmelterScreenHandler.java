@@ -17,7 +17,6 @@ import java.text.NumberFormat;
 
 public class AlloySmelterScreenHandler extends ScreenHandler {
     private final Inventory inventory;
-    private final World world;
     private final PropertyDelegate propertyDelegate;
 
     public AlloySmelterScreenHandler(int syncId, PlayerInventory playerInventory) {
@@ -25,10 +24,10 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
     }
 
     public AlloySmelterScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate) {
-        super(ModScreenHandler.ALLOY_SMELTER_SCREEN_HANDLER, syncId);
+        super(ModScreenHandlers.ALLOY_SMELTER_SCREEN_HANDLER, syncId);
         checkSize(inventory, 3);
         this.inventory = inventory;
-        this.world = playerInventory.player.world;
+        World world = playerInventory.player.world;
         inventory.onOpen(playerInventory.player);
         this.propertyDelegate = delegate;
 
@@ -56,7 +55,7 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
         ItemStack newStack = ItemStack.EMPTY;
         //Get the transfer slot
         Slot slot = this.slots.get(invSlot);
-        if (slot != null && slot.hasStack()) {
+        if (slot.hasStack()) {
             ItemStack originalStack = slot.getStack();
             newStack = originalStack.copy();
             if (invSlot < this.inventory.size()) {
