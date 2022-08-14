@@ -19,6 +19,7 @@ public class ModItems {
     public static final Item DEBUG_TOOL =registerItem("debug_tool",new DebugToolItem(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(1)));
     public static final Item SCRAP_NUGGET =registerItem("scrap_nugget",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static final Item CONDUCTIVE_ALLOY_INGOT =registerItem("conductive_alloy_ingot",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
+    public static final Item STEEL_ALLOY_INGOT =registerItem("steel_alloy_ingot",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static final Item COAL_DUST =registerItem("coal_dust",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static final Item LAPIS_LAZULI_DUST =registerItem("lapis_lazuli_dust",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));
     public static final Item ENDER_DUST =registerItem("ender_dust",new Item(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(64)));

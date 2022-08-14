@@ -27,7 +27,6 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
         super(ModScreenHandlers.ALLOY_SMELTER_SCREEN_HANDLER, syncId);
         checkSize(inventory, 3);
         this.inventory = inventory;
-        World world = playerInventory.player.world;
         inventory.onOpen(playerInventory.player);
         this.propertyDelegate = delegate;
 

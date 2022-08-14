@@ -9,14 +9,14 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.Set;
 
-public class PouchScreenHandler extends GenericContainerScreenHandler {
+public class PouchScreenHandler extends ScreenHandler {
     public static final Set<Item> SHULKER_BOXES;
 
     static {
@@ -29,30 +29,31 @@ public class PouchScreenHandler extends GenericContainerScreenHandler {
 
     public final Inventory inventory;
     public final PlayerInventory playerInventory;
-    public final int inventoryWidth = 9;
-    public final int inventoryHeight = 6;
+    public final int inventoryHeight = 3;
     private final ScreenHandlerType<?> type;
 
     public PouchScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(54));
+        this(syncId, playerInventory, new SimpleInventory(27));
+        System.out.println(1);
     }
 
     public PouchScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
         this(ModScreenHandlers.POUCH_SCREEN_HANDLER, syncId, playerInventory, inventory);
+        System.out.println(2);
     }
 
     public PouchScreenHandler(ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, Inventory inventory) {
-        super(ScreenHandlerType.GENERIC_9X6, syncId, playerInventory, inventory, 6);
+        super(ModScreenHandlers.POUCH_SCREEN_HANDLER, syncId);
+        System.out.println(3);
         this.type = type;
         this.inventory = inventory;
         this.playerInventory = playerInventory;
-
-        checkSize(inventory, 54);
+        checkSize(inventory, 27);
         inventory.onOpen(playerInventory.player);
-        setupSlots(false);
+        setupSlots();
     }
 
-    public void setupSlots(final boolean includeChestInventory) {
+    public void setupSlots() {
         int i = (this.inventoryHeight - 4) * 18;
         int n;
         int m;
@@ -88,7 +89,6 @@ public class PouchScreenHandler extends GenericContainerScreenHandler {
 
             if (stack.getItem() instanceof PouchItem ||
                     SHULKER_BOXES.contains(stack.getItem())) {
-                // Return to caller with no action
                 return;
             }
 
@@ -102,10 +102,36 @@ public class PouchScreenHandler extends GenericContainerScreenHandler {
         return this.inventory.canPlayerUse(player);
     }
 
-    // Disable shift-click movement for now
     @Override
     public ItemStack transferSlot(PlayerEntity player, int index) {
-        return ItemStack.EMPTY;
+        ItemStack itemStack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(index);
+        ItemStack originalStack = slot.getStack();
+        Item testItem = originalStack.getItem();
+        if (testItem instanceof PouchItem ||
+                SHULKER_BOXES.contains(testItem)) {
+            return ItemStack.EMPTY;
+        }
+
+        if (slot.hasStack()) {
+            ItemStack itemStack2 = slot.getStack();
+            itemStack = itemStack2.copy();
+            if (index < 27) {
+                if (!this.insertItem(itemStack2, 27, this.slots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.insertItem(itemStack2, 0, 27, false)) {
+                return ItemStack.EMPTY;
+            }
+
+            if (itemStack2.isEmpty()) {
+                slot.setStack(ItemStack.EMPTY);
+            } else {
+                slot.markDirty();
+            }
+        }
+
+        return itemStack;
     }
 
     public static class BackpackSlot extends Slot {
@@ -123,55 +149,8 @@ public class PouchScreenHandler extends GenericContainerScreenHandler {
             return canMoveStack(stack);
         }
 
-        // Prevents items that override canBeNested() from being inserted into backpack
         public boolean canMoveStack(ItemStack stack) {
             return stack.getItem().canBeNested();
         }
     }
-
-//    @Override
-//    public ItemStack transferSlot(final PlayerEntity player, final int invSlot)
-//    {
-//        ItemStack newStack = ItemStack.EMPTY;
-//        Slot slot = this.slots.get(invSlot);
-//        ItemStack originalStack = slot.getStack();
-//        Item testItem = originalStack.getItem();
-//
-//        if(testItem instanceof BackpackItem ||
-//                testItem instanceof SimpleBundleItem ||
-//                testItem instanceof VoidBundleItem ||
-//                SHULKER_BOXES.contains(testItem))
-//        {
-//            return ItemStack.EMPTY;
-//        }
-//
-//        if (slot.hasStack())
-//        {
-//            newStack = originalStack.copy();
-//            if (invSlot < this.inventory.size())
-//            {
-//                if (!this.testInsertItem(originalStack, this.inventory.size(), this.slots.size(), true))
-//                {
-//                    return ItemStack.EMPTY;
-//                }
-//            }
-//            else if (!this.testInsertItem(originalStack, 0, this.inventory.size(), false))
-//            {
-//                return ItemStack.EMPTY;
-//            }
-//
-//            if (originalStack.isEmpty())
-//            {
-//                slot.setStack(ItemStack.EMPTY);
-//            }
-//            else
-//            {
-//                slot.markDirty();
-//            }
-//        }
-//
-//        return newStack;
-//    }
-
-
 }
