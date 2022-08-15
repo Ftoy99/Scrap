@@ -32,6 +32,8 @@ public class ModBlocks{
 
     public static final Block CRUSHER_BLOCK = registerBlock("crusher_block",new CrusherBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
+    public static final Block CHARGER_BLOCK = registerBlock("charger_block",new ChargerBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
     public static final Block BLOCK_BREAKER_BLOCK = registerBlock("block_breaker_block",new BlockBreakerBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
     public static final Block BLOCK_PLACER_BLOCK = registerBlock("block_placer_block",new BlockPlacerBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);

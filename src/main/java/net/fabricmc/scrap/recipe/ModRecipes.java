@@ -28,5 +28,11 @@ public class ModRecipes {
 
         Registry.register(Registry.RECIPE_TYPE, new Identifier(Main.MOD_ID, AlloyingRecipes.Type.ID),
                 AlloyingRecipes.Type.INSTANCE);
+
+        Registry.register(Registry.RECIPE_TYPE, new Identifier(Main.MOD_ID, ChargingRecipes.Type.ID),
+                ChargingRecipes.Type.INSTANCE);
+
+        Registry.register(Registry.RECIPE_SERIALIZER, new Identifier(Main.MOD_ID, ChargingRecipes.Serializer.ID),
+                ChargingRecipes.Serializer.INSTANCE);
     }
 }
