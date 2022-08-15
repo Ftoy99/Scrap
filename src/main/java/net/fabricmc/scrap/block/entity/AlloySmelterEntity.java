@@ -32,7 +32,7 @@ public class AlloySmelterEntity extends BlockEntity implements NamedScreenHandle
         }
     };
     protected final PropertyDelegate propertyDelegate;
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
+    public final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
     private int progress;
     private int cost;
     private int maxProgress;

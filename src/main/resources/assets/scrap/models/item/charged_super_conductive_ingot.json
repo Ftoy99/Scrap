@@ -1,0 +1,6 @@
+{
+  "parent" : "item/generated",
+  "textures" : {
+    "layer0" : "scrap:item/charged_super_conductive_ingot"
+  }
+}

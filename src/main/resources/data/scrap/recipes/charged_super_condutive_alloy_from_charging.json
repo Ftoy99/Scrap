@@ -1,0 +1,13 @@
+{
+  "type": "scrap:charging",
+  "time": 200,
+  "consumption": 50,
+  "ingredients": [
+    {
+      "item": "scrap:uncharged_super_conductive_ingot"
+    }
+  ],
+  "output": {
+    "item": "scrap:charged_super_conductive_ingot"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "scrap:scrap_ingot"
+    },
+    "*": {
+      "item": "minecraft:copper_ingot"
+    },
+    "$": {
+      "item": "minecraft:blaze_powder"
+    },
+    "%": {
+      "item": "scrap:conductive_alloy_ingot"
+    }
+  },
+  "pattern": [
+    " * ",
+    "#$#",
+    "#%#"
+  ],
+  "result": {
+    "item": "scrap:basic_capacitor"
+  }
+}

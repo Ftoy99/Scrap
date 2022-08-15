@@ -5,16 +5,28 @@
 
   "item.scrap.scrap": "Scrap",
   "item.scrap.scrap_ingot": "Scrap Ingot",
+  "item.scrap.scrap_alloy_ingot": "Scrap Alloy Ingot",
+  "item.scrap.refined_scrap_ingot": "Refined Scrap Ingot",
   "item.scrap.nugget": "Scrap Nugget",
+  "item.scrap.steel_stick": "Steel Stick",
+  "item.scrap.basic_capacitor": "Basic Capacitor",
   "item.scrap.washed_raw_iron": "Washed Raw Iron",
   "item.scrap.washed_raw_gold": "Washed Raw Gold",
   "item.scrap.washed_raw_copper": "Washed Raw Copper",
   "item.scrap.conductive_alloy_ingot": "Conductive Alloy Ingot",
   "item.scrap.steel_alloy_ingot": "Steel Alloy Ingot",
+  "item.scrap.charged_super_conductive_ingot": "Charged Super Conductive Ingot",
+  "item.scrap.uncharged_super_conductive_ingot": "Uncharged Super Conductive Ingot",
   "item.scrap.coal_dust": "Coal Dust",
   "item.scrap.lapis_lazuli_dust": "Lapis Lazuli Dust",
   "item.scrap.ender_dust": "Ender Dust",
+  "item.scrap.refining_dust": "Refining Dust",
   "item.scrap.pouch": "Pouch",
+  "item.scrap.scrap_alloy_sword": "Scrap Alloy Sword",
+  "item.scrap.scrap_alloy_pickaxe": "Scrap Alloy Pickaxe",
+  "item.scrap.scrap_alloy_axe": "Scrap Alloy Axe",
+  "item.scrap.scrap_alloy_hoe": "Scrap Alloy Hoe",
+  "item.scrap.scrap_alloy_shovel": "Scrap Alloy Shovel",
 
 
 
@@ -28,6 +40,7 @@
   "block.scrap.block_breaker_block": "Block Breaker",
   "block.scrap.block_placer_block": "Block Placer",
   "block.scrap.alloy_smelter_block": "Alloy Smelter",
+  "block.scrap.charger_block": "Charger",
   "block.scrap.creative_energy_cell_block": "Creative Energy Cell",
 
 

@@ -1,0 +1,17 @@
+{
+  "type": "scrap:alloying",
+  "time": 200,
+  "consumption": 20,
+  "input1": {
+    "item": "scrap:refined_scrap_ingot",
+    "count": 1
+  },
+  "input2": {
+    "item": "scrap:charged_super_conductive_ingot",
+    "count": 1
+  },
+  "output": {
+    "item": "scrap:scrap_alloy_ingot",
+    "count": 1
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "scrap:basic_capacitor"
+    },
+    "*": {
+      "item": "scrap:scrap_alloy_ingot"
+    },
+    "@": {
+      "item": "scrap:steel_stick"
+    }
+  },
+  "pattern": [
+    "*#*",
+    " @ ",
+    " @ "
+  ],
+  "result": {
+    "item": "scrap:scrap_alloy_pickaxe"
+  }
+}

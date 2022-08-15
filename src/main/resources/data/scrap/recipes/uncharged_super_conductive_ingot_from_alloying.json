@@ -1,0 +1,17 @@
+{
+  "type": "scrap:alloying",
+  "time": 200,
+  "consumption": 40,
+  "input1": {
+    "item": "minecraft:gold_ingot",
+    "count": 1
+  },
+  "input2": {
+    "item": "scrap:lapis_lazuli_dust",
+    "count": 2
+  },
+  "output": {
+    "item": "scrap:uncharged_super_conductive_ingot",
+    "count": 1
+  }
+}

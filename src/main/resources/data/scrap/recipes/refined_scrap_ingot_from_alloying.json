@@ -1,0 +1,17 @@
+{
+  "type": "scrap:alloying",
+  "time": 200,
+  "consumption": 20,
+  "input1": {
+    "item": "scrap:scrap_ingot",
+    "count": 1
+  },
+  "input2": {
+    "item": "scrap:refining_dust",
+    "count": 3
+  },
+  "output": {
+    "item": "scrap:refined_scrap_ingot",
+    "count": 1
+  }
+}

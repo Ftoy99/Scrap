@@ -1,0 +1,11 @@
+{
+  "type": "scrap:crushing",
+  "ingredients": [
+    {
+      "item": "minecraft:coal"
+    }
+  ],
+  "output": {
+    "item": "scrap:coal_dust"
+  }
+}
