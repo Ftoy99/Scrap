@@ -74,7 +74,6 @@ public class BlockPlacerEntity extends BlockEntity implements NamedScreenHandler
             if (entity.energyStorage.amount >= entity.placeCost) {
                 if (world.getBlockState(blockToPlacePos).getBlock() == Blocks.AIR) {
                     //place block
-                    System.out.println("Check Block in inv");
                     for (int i = 0; i < entity.inventory.size(); i++) {
                         if (entity.getStack(i)!=ItemStack.EMPTY && entity.getStack(i).getItem() instanceof BlockItem) {
                             System.out.println("Placing BLock");
