@@ -21,12 +21,9 @@ public class FurnaceGeneratorScreenHandler extends ScreenHandler {
     private final PropertyDelegate propertyDelegate;
 
     public FurnaceGeneratorScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(1),new ArrayPropertyDelegate(4));
+        this(syncId, playerInventory, new SimpleInventory(1), new ArrayPropertyDelegate(4));
     }
 
-    public boolean isFuel(ItemStack itemStack) {
-        return FurnaceGeneratorEntity.canUseAsFuel(itemStack);
-    }
     public FurnaceGeneratorScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate) {
         super(ModScreenHandlers.FURNACE_GENERATOR_SCREEN_HANDLER, syncId);
         checkSize(inventory, 1);
@@ -36,11 +33,16 @@ public class FurnaceGeneratorScreenHandler extends ScreenHandler {
         this.propertyDelegate = delegate;
 
         // Our Slots
-        this.addSlot(new FurnaceGeneratorFuelSlot(this,playerInventory.player,inventory, 0, 80, 41));
+        this.addSlot(new FurnaceGeneratorFuelSlot(this, playerInventory.player, inventory, 0, 80, 41));
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
         this.addProperties(propertyDelegate);
     }
+
+    public boolean isFuel(ItemStack itemStack) {
+        return FurnaceGeneratorEntity.canUseAsFuel(itemStack);
+    }
+
     public boolean isBurning() {
         return propertyDelegate.get(0) > 0;
     }
@@ -75,10 +77,18 @@ public class FurnaceGeneratorScreenHandler extends ScreenHandler {
         }
         return tooltip;
     }
+
     public int getEnergyProgress() {
-        int i = this.propertyDelegate.get(3);
-        return this.propertyDelegate.get(2) * 50 / i;
+        int maxEnergy = this.propertyDelegate.get(3);
+        if (maxEnergy > 0) {
+            return this.propertyDelegate.get(2) * 50 / maxEnergy;
+        }
+        else{
+            return 0;
+        }
+
     }
+
     @Override
     public ItemStack transferSlot(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;

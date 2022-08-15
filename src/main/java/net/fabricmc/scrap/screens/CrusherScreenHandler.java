@@ -10,7 +10,6 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.world.World;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -20,20 +19,19 @@ public class CrusherScreenHandler extends ScreenHandler {
     private final PropertyDelegate propertyDelegate;
 
     public CrusherScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(2),new ArrayPropertyDelegate(3));
+        this(syncId, playerInventory, new SimpleInventory(2), new ArrayPropertyDelegate(5));
     }
 
     public CrusherScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate) {
         super(ModScreenHandlers.CRUSHER_SCREEN_HANDLER, syncId);
         checkSize(inventory, 2);
         this.inventory = inventory;
-        World world = playerInventory.player.world;
         inventory.onOpen(playerInventory.player);
         this.propertyDelegate = delegate;
 
         // Our Slots
         this.addSlot(new Slot(inventory, 0, 38, 41));
-        this.addSlot(new ScrapOutputSlot(playerInventory.player,inventory, 1, 120, 41));
+        this.addSlot(new ScrapOutputSlot(playerInventory.player, inventory, 1, 120, 41));
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
         this.addProperties(propertyDelegate);
@@ -47,23 +45,29 @@ public class CrusherScreenHandler extends ScreenHandler {
     public String getEnergyTooltip() {
         String tooltip = "";
         int currentEnergy = this.propertyDelegate.get(0);
+        int maxEnergy = this.propertyDelegate.get(2);
         NumberFormat formatter = new DecimalFormat("0.0");
         if (currentEnergy > 1000) {
 
-            String current = formatter.format((float) currentEnergy / 1000);
-            String capacity = formatter.format((float) this.propertyDelegate.get(2) / 1000);
+            String current = formatter.format((float) (currentEnergy / 1000));
+            String capacity = formatter.format((float) (maxEnergy / 1000));
             tooltip += current + "KSU/" + capacity + "KSU";
         } else {
 
             tooltip += currentEnergy;
-            String capacity = formatter.format((float) this.propertyDelegate.get(2) / 1000);
+            String capacity = formatter.format((float) (maxEnergy / 1000));
             tooltip += "SU/" + capacity + "KSU";
         }
         return tooltip;
     }
+
     public int getEnergyProgress() {
-        int i = this.propertyDelegate.get(2);
-        return this.propertyDelegate.get(0) * 50 / i;
+        int maxEnergy = this.propertyDelegate.get(2);
+        if (maxEnergy > 0) {
+            return this.propertyDelegate.get(0) * 50 / maxEnergy;
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -106,7 +110,7 @@ public class CrusherScreenHandler extends ScreenHandler {
     }
 
     public int getProgress() {
-            int i = 200;
-            return this.propertyDelegate.get(1) * 24 / i;
+        int i = 200;
+        return this.propertyDelegate.get(1) * 24 / i;
     }
 }
