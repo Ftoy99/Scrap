@@ -1,5 +1,7 @@
 package net.fabricmc.scrap.block.entity;
 
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.scrap.item.inventory.ImplementedInventory;
 import net.fabricmc.scrap.recipe.ChargingRecipes;
 import net.fabricmc.scrap.screens.ChargerScreenHandler;
@@ -19,6 +21,8 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import team.reborn.energy.api.EnergyStorage;
+import team.reborn.energy.api.base.SimpleBatteryItem;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.Optional;
@@ -88,6 +92,32 @@ public class ChargerEntity extends BlockEntity implements NamedScreenHandlerFact
 
     public static void tick(World world, BlockPos pos, BlockState state, ChargerEntity entity) {
         if (!world.isClient) {
+            if (entity.inventory.get(0).getItem() instanceof SimpleBatteryItem) {
+                EnergyStorage maybeEnergyStorage = EnergyStorage.ITEM.find(entity.inventory.get(0), ContainerItemContext.withInitial(entity.inventory.get(0)));
+                if (maybeEnergyStorage != null) {
+                    if (maybeEnergyStorage.getAmount() == maybeEnergyStorage.getCapacity()) {
+                        System.out.println("full");
+                        return;
+                    }
+                    try (Transaction transaction = Transaction.openOuter()) {
+                        long inserted;
+                        if (entity.energyStorage.amount > 100L) {
+                            inserted = maybeEnergyStorage.insert(100L, transaction);
+                        } else {
+                            if (entity.energyStorage.amount > 0L) {
+                                inserted = maybeEnergyStorage.insert(entity.energyStorage.amount, transaction);
+                            }else {
+                                inserted=0L;
+                            }
+
+                        }
+                        entity.energyStorage.amount -= inserted;
+                        transaction.commit();
+                        System.out.println("Inserted amount:"+inserted);
+                    }
+                    SimpleBatteryItem.setStoredEnergyUnchecked(entity.inventory.get(0),maybeEnergyStorage.getAmount());
+                }
+            }
             if (hasRecipe(entity)) {
                 ChargingRecipes recipe = getRecipe(entity);
                 entity.maxProgress = recipe.getTime();
