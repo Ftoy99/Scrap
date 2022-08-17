@@ -9,7 +9,7 @@ import net.minecraft.util.Lazy;
 import java.util.function.Supplier;
 
 public enum ModToolMaterials implements ToolMaterial {
-    SCRAP_ALLOY(5, 3000, 15.0F, 5.0F, 22, () -> {
+    SCRAP_ALLOY(5, 3000, 18.0F, 5.0F, 22, () -> {
         return Ingredient.ofItems(new ItemConvertible[]{ModItems.SCRAP_ALLOY_INGOT});
     });
 
