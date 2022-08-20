@@ -96,7 +96,8 @@ public class ChargerEntity extends BlockEntity implements NamedScreenHandlerFact
                 EnergyStorage maybeEnergyStorage = EnergyStorage.ITEM.find(entity.inventory.get(0), ContainerItemContext.withInitial(entity.inventory.get(0)));
                 if (maybeEnergyStorage != null) {
                     if (maybeEnergyStorage.getAmount() == maybeEnergyStorage.getCapacity()) {
-                        System.out.println("full");
+                        entity.inventory.set(1,entity.inventory.get(0));
+                        entity.inventory.set(0,ItemStack.EMPTY);
                         return;
                     }
                     try (Transaction transaction = Transaction.openOuter()) {
