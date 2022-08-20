@@ -1,21 +1,18 @@
 package net.fabricmc.scrap.item.custom;
 
 import net.fabricmc.scrap.item.inventory.PouchInventory;
-import net.fabricmc.scrap.screens.ModScreenHandlers;
 import net.fabricmc.scrap.screens.PouchScreenHandler;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
-import net.minecraft.util.ActionResult;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-
-import java.util.OptionalInt;
+import org.jetbrains.annotations.Nullable;
 
 
 public class PouchItem extends Item {
@@ -43,11 +40,18 @@ public class PouchItem extends Item {
     }
 
     private NamedScreenHandlerFactory createScreenHandlerFactory(ItemStack stack) {
-//        return new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) ->
-//                 new PouchScreenHandler(i, playerInventory, new PouchInventory(stack)), stack.getName());
-        return new SimpleNamedScreenHandlerFactory((syncId, playerInventory, player) ->
-                new PouchScreenHandler(ModScreenHandlers.POUCH_SCREEN_HANDLER,syncId,playerInventory,new PouchInventory(stack)),stack.getName());
+        return new NamedScreenHandlerFactory() {
 
+            @Override
+            public Text getDisplayName() {
+                return stack.getName();
+            }
+
+            @Nullable
+            @Override
+            public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+                return new PouchScreenHandler(syncId,inv,new PouchInventory(stack));
+            }
+        };
     }
-
 }

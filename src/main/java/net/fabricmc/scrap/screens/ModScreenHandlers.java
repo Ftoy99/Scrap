@@ -26,6 +26,6 @@ public class ModScreenHandlers {
         CHARGER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"charger_screen_handler"), new ScreenHandlerType<>(ChargerScreenHandler::new));
         ALLOY_SMELTER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"alloy_smelter_screen_handler"), new ScreenHandlerType<>(AlloySmelterScreenHandler::new));
         BLOCK_BREAKER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"block_breaker_screen_handler"), new ScreenHandlerType<>(BlockBreakerScreenHandler::new));
-        BLOCK_PLACER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"pouch_placer_handler"), new ScreenHandlerType<>(BlockPlacerScreenHandler::new));
+        BLOCK_PLACER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"block_placer_handler"), new ScreenHandlerType<>(BlockPlacerScreenHandler::new));
     }
 }
