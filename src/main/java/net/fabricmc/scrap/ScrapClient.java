@@ -21,5 +21,6 @@ public class ScrapClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.BLOCK_BREAKER_SCREEN_HANDLER, BlockBreakerScreen::new);
         HandledScreens.register(ModScreenHandlers.BLOCK_PLACER_SCREEN_HANDLER, BlockPlacerScreen::new);
         HandledScreens.register(ModScreenHandlers.POUCH_SCREEN_HANDLER, PouchScreen::new);
+        HandledScreens.register(ModScreenHandlers.QUARRY_SCREEN_HANDLER, QuarryScreen::new);
     }
 }

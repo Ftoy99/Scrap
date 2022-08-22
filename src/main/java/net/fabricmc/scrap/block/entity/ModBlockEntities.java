@@ -21,6 +21,7 @@ public class ModBlockEntities {
     public static BlockEntityType<BlockBreakerEntity> BLOCK_BREAKER_ENTITY;
     public static BlockEntityType<BlockPlacerEntity> BLOCK_PLACER_ENTITY;
     public static BlockEntityType<ChargerEntity> CHARGER_ENTITY;
+    public static BlockEntityType<QuarryEntity> QUARRY_ENTITY;
 
     public static void registerBlockEntities() {
         //Ore Washer
@@ -84,5 +85,12 @@ public class ModBlockEntities {
                         ModBlocks.CHARGER_BLOCK).build(null));
 
         SimpleEnergyStorage.SIDED.registerForBlockEntity((myBlockEntity, direction) -> myBlockEntity.energyStorage, CHARGER_ENTITY);
+
+        //Quarry
+        QUARRY_ENTITY =Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(Main.MOD_ID, "quarry_block"),
+                FabricBlockEntityTypeBuilder.create(QuarryEntity::new,
+                        ModBlocks.QUARRY_BLOCK).build(null));
+
+        SimpleEnergyStorage.SIDED.registerForBlockEntity((myBlockEntity, direction) -> myBlockEntity.energyStorage, QUARRY_ENTITY);
     }
 }

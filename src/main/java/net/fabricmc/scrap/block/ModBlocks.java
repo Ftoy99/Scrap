@@ -40,6 +40,8 @@ public class ModBlocks{
 
     public static final Block ALLOY_SMELTER_BLOCK = registerBlock("alloy_smelter_block",new AlloySmelterBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
 
+    public static final Block QUARRY_BLOCK = registerBlock("quarry_block",new QuarryBlock(FabricBlockSettings.of(Material.METAL).requiresTool().strength(5.0F, 6.0F)), ModItemGroup.SCRAP);
+
     public static final Block CONDUCTIVE_ENERGY_DUCT_BLOCK = registerBlock("conductive_energy_duct_block",new ConductiveEnergyDuctBlock(0.2500f,FabricBlockSettings.of(Material.GLASS).strength(2.0F, 2.0F)), ModItemGroup.SCRAP);
 
     public static Block registerBlock(String name, Block block, ItemGroup group){

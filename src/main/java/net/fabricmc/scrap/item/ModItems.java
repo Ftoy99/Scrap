@@ -58,6 +58,7 @@ public class ModItems {
     //Random Tools
     public static final Item POUCH =registerItem("pouch",new PouchItem(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(1)));
     public static final Item DEBUG_TOOL =registerItem("debug_tool",new DebugToolItem(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(1)));
+    public static final Item SPATIAL_MARKER =registerItem("spatial_marker",new SpatialMarkerItem(new FabricItemSettings().group(ModItemGroup.SCRAP).maxCount(1)));
 
 
     //Tools

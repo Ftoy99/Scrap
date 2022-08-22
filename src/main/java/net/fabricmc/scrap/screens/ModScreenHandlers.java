@@ -15,6 +15,7 @@ public class ModScreenHandlers {
     public static ScreenHandlerType<AlloySmelterScreenHandler> ALLOY_SMELTER_SCREEN_HANDLER;
     public static ScreenHandlerType<BlockBreakerScreenHandler> BLOCK_BREAKER_SCREEN_HANDLER;
     public static ScreenHandlerType<BlockPlacerScreenHandler> BLOCK_PLACER_SCREEN_HANDLER;
+    public static ScreenHandlerType<QuarryScreenHandler> QUARRY_SCREEN_HANDLER;
 
 
     public static void registerModScreens() {
@@ -27,5 +28,6 @@ public class ModScreenHandlers {
         ALLOY_SMELTER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"alloy_smelter_screen_handler"), new ScreenHandlerType<>(AlloySmelterScreenHandler::new));
         BLOCK_BREAKER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"block_breaker_screen_handler"), new ScreenHandlerType<>(BlockBreakerScreenHandler::new));
         BLOCK_PLACER_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"block_placer_handler"), new ScreenHandlerType<>(BlockPlacerScreenHandler::new));
+        QUARRY_SCREEN_HANDLER = Registry.register(Registry.SCREEN_HANDLER, new Identifier(Main.MOD_ID,"quarry_handler"), new ScreenHandlerType<>(QuarryScreenHandler::new));
     }
 }

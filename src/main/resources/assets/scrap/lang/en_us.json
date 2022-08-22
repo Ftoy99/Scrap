@@ -27,6 +27,7 @@
   "item.scrap.scrap_alloy_axe": "Scrap Alloy Axe",
   "item.scrap.scrap_alloy_hoe": "Scrap Alloy Hoe",
   "item.scrap.scrap_alloy_shovel": "Scrap Alloy Shovel",
+  "item.scrap.spatial_marker": "Spatial Marker",
 
 
 
@@ -42,6 +43,7 @@
   "block.scrap.alloy_smelter_block": "Alloy Smelter",
   "block.scrap.charger_block": "Charger",
   "block.scrap.creative_energy_cell_block": "Creative Energy Cell",
+  "block.scrap.quarry_block": "Quarry",
 
 
 
